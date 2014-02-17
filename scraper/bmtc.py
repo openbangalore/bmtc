@@ -3,6 +3,7 @@
 import sys
 import sqlite3 as lite
 import requests
+import json
 from BeautifulSoup import BeautifulSoup
 final_page_number = 111
 start_page_number = 1
@@ -57,4 +58,62 @@ def loadRoutes(start_page_number,final_page_number):
                 con.commit()
     con.close()
 
-loadRoutes(start_page_number,final_page_number) 
+def loadBusstopMapJSON():
+    con = lite.connect('bmtc.sqlite')
+    cur = con.cursor()
+    cur.execute("select map_link, route_no  FROM routes where map_json_content is null")
+    rows = cur.fetchall()
+    cur2 = con.cursor()
+    for row in rows:
+        try:
+            url = row[0]
+            route_no = row[1]
+            print url
+            html_src = requests.get(url)
+            soup = BeautifulSoup(html_src.content)
+            scripts = soup.findAll("script")
+            our_script = scripts[6]
+            script_text = our_script.text
+            script_text = script_text.replace("jQuery.extend(Drupal.settings, ","")
+            script_text = script_text[:-2]
+            #print script_text
+            data = json.loads(script_text)
+            print data['busstops']
+            document ={"map_json_content": json.dumps(data['busstops']), "route_no":route_no}
+            cur2.execute("update routes set map_json_content=:map_json_content where route_no=:route_no", document)
+            con.commit()
+        except:
+            pass
+    con.close()
+
+def loadBusStop():
+    con = lite.connect('bmtc.sqlite')
+    cur = con.cursor()
+    cur.execute("select map_link, route_no  FROM routes where map_json_content is null")
+    rows = cur.fetchall()
+    cur2 = con.cursor()
+    for row in rows:
+        try:
+            url = row[0]
+            route_no = row[1]
+            print url
+            html_src = requests.get(url)
+            soup = BeautifulSoup(html_src.content)
+            scripts = soup.findAll("script")
+            our_script = scripts[6]
+            script_text = our_script.text
+            script_text = script_text.replace("jQuery.extend(Drupal.settings, ","")
+            script_text = script_text[:-2]
+            #print script_text
+            data = json.loads(script_text)
+            print data['busstops']
+            document ={"map_json_content": json.dumps(data['busstops']), "route_no":route_no}
+            cur2.execute("update routes set map_json_content=:map_json_content where route_no=:route_no", document)
+            con.commit()
+        except:
+            pass
+    con.close()
+
+#loadBusstopMapJSON()
+#loadRoutes(start_page_number,final_page_number) 
+loadBusStop()
