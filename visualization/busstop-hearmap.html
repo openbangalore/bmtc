@@ -1,0 +1,6955 @@
+<!DOCTYPE html lang="en-UK">
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>BMTC Busstop Heat Map</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href='http://fonts.googleapis.com/css?family=Wellfleet' rel='stylesheet' type='text/css'>
+		<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+		<!--[if lte IE 8]>
+		    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" />
+		<![endif]-->
+		<style type="text/css" media="screen">
+			body{
+				margin: 0;
+				padding: 0;
+				font-family: 'Wellfleet', cursive;
+			}
+
+			#map {
+				width: 80%;
+				height: 90%;
+			}
+		</style>
+		<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet-src.js"></script>
+		<script type="text/javascript" src="./js/lf_heatmap/heatmap.js"></script>
+		<script type="text/javascript" src="./js/lf_heatmap/heatmap-leaflet.js"></script>
+		<script type="text/javascript" src="./js/lf_heatmap/QuadTree.js"></script>
+
+		<script type="text/javascript" charset="utf-8">
+			$(function() {
+				var baseLayer = L.tileLayer(
+					'http://{s}.tile.cloudmade.com/ad132e106cd246ec961bbdfbe0228fe8/997/256/{z}/{x}/{y}.png',{
+						attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+						maxZoom: 18
+					}
+				);
+
+				var heatmapLayer = L.TileLayer.heatMap({
+					// radius could be absolute or relative
+					// absolute: radius in meters, relative: radius in pixels
+					radius: { value: 500, absolute: true },
+			        //radius: { value: 20, absolute: false },
+					opacity: 0.8,
+					gradient: {
+						0.45: "rgb(0,0,255)",
+						0.55: "rgb(0,255,255)",
+						0.65: "rgb(0,255,0)",
+						0.95: "yellow",
+						1.0: "rgb(255,0,0)"
+					}
+				});
+
+				heatmapLayer.setData(testData.data);
+
+				var map = new L.Map('map', {
+					center: new L.LatLng(12.9667,77.5667),
+					zoom: 11,
+					layers: [baseLayer, heatmapLayer]
+				});
+
+				// make accessible for debugging
+				layer = heatmapLayer;
+			});
+		</script>
+	</head>
+	<body>
+		<center>
+		<h1>BMTC - Bangalore Bus Stop HeatMap</h1>
+		<div id="map"></div>
+		</center>
+	</body>
+
+	<script type="text/javascript" charset="utf-8">
+			var testData={
+    		max: 31,
+    		data: [
+  {
+    "Bst_ID":"Blr_Bst000738",
+    "NAME":"Trinity Circle (Church)",
+    "Ward_No":114,
+    "lon":77.6198163125,
+    "lat":12.9725111086,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000352",
+    "NAME":"Philips (Ulsoor Lake)",
+    "Ward_No":114,
+    "lon":77.6215996446,
+    "lat":12.9728166674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000354",
+    "NAME":"Binnamangala",
+    "Ward_No":80,
+    "lon":77.6403329619,
+    "lat":12.9839499972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000358",
+    "NAME":"Benniganahalli",
+    "Ward_No":57,
+    "lon":77.6635162857,
+    "lat":12.9941499969,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000357",
+    "NAME":"Kaggadasapura Jn (Big Bazaar)",
+    "Ward_No":57,
+    "lon":77.6576162899,
+    "lat":12.991299997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000136",
+    "NAME":"K. R. Puram Rlwy Station",
+    "Ward_No":56,
+    "lon":77.6768829361,
+    "lat":13.0002166667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000792",
+    "NAME":"ITI Bus Stop",
+    "Ward_No":55,
+    "lon":77.6860829327,
+    "lat":13.0055277744,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000771",
+    "NAME":"Vannar Pete",
+    "Ward_No":114,
+    "lon":77.6210496447,
+    "lat":12.9563333274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000740",
+    "NAME":"Passport Office",
+    "Ward_No":147,
+    "lon":77.6186496461,
+    "lat":12.9461833275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000768",
+    "NAME":"Koramangala (80 FT RD)",
+    "Ward_No":148,
+    "lon":77.6264996406,
+    "lat":12.9378999974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000889",
+    "NAME":"Koramangala (SONY World)",
+    "Ward_No":151,
+    "lon":77.6266829704,
+    "lat":12.9369666674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000741",
+    "NAME":"NGV Center",
+    "Ward_No":148,
+    "lon":77.6225996433,
+    "lat":12.9426166674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000899",
+    "NAME":"Koramangala 1st Block",
+    "Ward_No":173,
+    "lon":77.6338313053,
+    "lat":12.9247749973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000841",
+    "NAME":"Coles park",
+    "Ward_No":78,
+    "lon":77.6084163206,
+    "lat":12.9982499976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000840",
+    "NAME":"Fraser town (Doddi stop)",
+    "Ward_No":60,
+    "lon":77.6121496515,
+    "lat":13.0027999975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000839",
+    "NAME":"Amanath Bank Stop",
+    "Ward_No":60,
+    "lon":77.6123829848,
+    "lat":13.0062333309,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000837",
+    "NAME":"Venketeshpuram02",
+    "Ward_No":31,
+    "lon":77.6188496474,
+    "lat":13.0201166641,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000823",
+    "NAME":"K.G. Halli",
+    "Ward_No":30,
+    "lon":77.6190663139,
+    "lat":13.0207833308,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000825",
+    "NAME":"Govindapura Cross",
+    "Ward_No":24,
+    "lon":77.6220829787,
+    "lat":13.0325333307,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000836",
+    "NAME":"Arabic college",
+    "Ward_No":23,
+    "lon":77.620666313,
+    "lat":13.0293499974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000691",
+    "NAME":"Kengeri",
+    "Ward_No":159,
+    "lon":77.4839663977,
+    "lat":12.9103666688,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00065",
+    "NAME":"Mylasandra (Mysore Raod)",
+    "Ward_No":159,
+    "lon":77.4906997241,
+    "lat":12.9177166655,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00068",
+    "NAME":"Bangalore University Gate",
+    "Ward_No":129,
+    "lon":77.5130663784,
+    "lat":12.9355499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000512",
+    "NAME":"Panthara palya",
+    "Ward_No":160,
+    "lon":77.524216372,
+    "lat":12.9402166651,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000684",
+    "NAME":"BWSSB Quaters",
+    "Ward_No":131,
+    "lon":77.5235497057,
+    "lat":12.9396833285,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000509",
+    "NAME":"Byatarayanapura Police Station",
+    "Ward_No":157,
+    "lon":77.5399996962,
+    "lat":12.951666665,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000680",
+    "NAME":"Vinayaka Stop",
+    "Ward_No":140,
+    "lon":77.5605330139,
+    "lat":12.9615666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000700",
+    "NAME":"Jaraganhalli",
+    "Ward_No":185,
+    "lon":77.5733996749,
+    "lat":12.902149998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000702",
+    "NAME":"Metro Mall (Kanakapura RD)",
+    "Ward_No":185,
+    "lon":77.5684663478,
+    "lat":12.894183328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000722",
+    "NAME":"Sarakki Gate",
+    "Ward_No":180,
+    "lon":77.5729330053,
+    "lat":12.910116668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000384",
+    "NAME":"Lalbagh Main Gate",
+    "Ward_No":143,
+    "lon":77.5849996684,
+    "lat":12.9540999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000454",
+    "NAME":"Purnima Bus Stop",
+    "Ward_No":118,
+    "lon":77.585682998,
+    "lat":12.9553499978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000603",
+    "NAME":"Corporation (Kalinga RD)",
+    "Ward_No":110,
+    "lon":77.5872829971,
+    "lat":12.9651333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000727",
+    "NAME":"Corporation Office",
+    "Ward_No":110,
+    "lon":77.5881163366,
+    "lat":12.9668999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000627",
+    "NAME":"T.V. Tower",
+    "Ward_No":35,
+    "lon":77.5911996654,
+    "lat":13.0090666678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000495",
+    "NAME":"Yeshwantpur Junction",
+    "Ward_No":44,
+    "lon":77.5530052451,
+    "lat":13.019438887,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00095",
+    "NAME":"Govardhan Turning",
+    "Ward_No":38,
+    "lon":77.553816359,
+    "lat":13.0178666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000473",
+    "NAME":"M E I Factory",
+    "Ward_No":38,
+    "lon":77.547433023,
+    "lat":13.0246833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000492",
+    "NAME":"MEI (Tumkur RD)",
+    "Ward_No":38,
+    "lon":77.544016365,
+    "lat":13.0264333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000660",
+    "NAME":"8th Mile (Tumkur RD)",
+    "Ward_No":39,
+    "lon":77.5075497166,
+    "lat":13.0451499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000478",
+    "NAME":"Jalahalli Cross",
+    "Ward_No":15,
+    "lon":77.5178663806,
+    "lat":13.0405166685,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000649",
+    "NAME":"Dasarahalli (Tumkur Rd)",
+    "Ward_No":15,
+    "lon":77.5142997127,
+    "lat":13.0425833285,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00041",
+    "NAME":"Madiwala Masjid",
+    "Ward_No":151,
+    "lon":77.6182829793,
+    "lat":12.9247333308,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000787",
+    "NAME":"Adugodi Police Quarters",
+    "Ward_No":146,
+    "lon":77.6083496529,
+    "lat":12.9416499976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000737",
+    "NAME":"Brigade Road (St Patricks Chur",
+    "Ward_No":111,
+    "lon":77.607091321,
+    "lat":12.9713999976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000179",
+    "NAME":"IIM-B",
+    "Ward_No":188,
+    "lon":77.5998996577,
+    "lat":12.8965999977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000181",
+    "NAME":"G.D. Marra (J.P. Nagar 3rd Ph)",
+    "Ward_No":188,
+    "lon":77.6004163242,
+    "lat":12.9080444421,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000237",
+    "NAME":"BTM Check Post",
+    "Ward_No":177,
+    "lon":77.5999663279,
+    "lat":12.9135833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000734",
+    "NAME":"Jayadeva (Opp Shoppers Stop)",
+    "Ward_No":176,
+    "lon":77.6000329879,
+    "lat":12.9140833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000235",
+    "NAME":"Jal Bhavan (Bannerghatta RD)",
+    "Ward_No":171,
+    "lon":77.6004663278,
+    "lat":12.9260833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000647",
+    "NAME":"Cantonment RLWY Station",
+    "Ward_No":63,
+    "lon":77.5972496612,
+    "lat":12.9937666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000796",
+    "NAME":"Frazer Town (Post Office)",
+    "Ward_No":78,
+    "lon":77.6121663181,
+    "lat":13.0012833309,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000814",
+    "NAME":"Depot - 10",
+    "Ward_No":24,
+    "lon":77.6317496387,
+    "lat":13.0262333306,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000849",
+    "NAME":"Varthurkodi",
+    "Ward_No":84,
+    "lon":77.7460134404,
+    "lat":12.9582305514,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000903",
+    "NAME":"Marathahalli (Jn. Vartur and O",
+    "Ward_No":150,
+    "lon":77.7021468084,
+    "lat":12.9567499964,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000169",
+    "NAME":"Raja Rajeshwari Talkies",
+    "Ward_No":113,
+    "lon":77.6616662863,
+    "lat":12.959216667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000854",
+    "NAME":"Kodihalli",
+    "Ward_No":88,
+    "lon":77.6453662979,
+    "lat":12.9601999972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000340",
+    "NAME":"Electric Stop (Manipal Center)",
+    "Ward_No":114,
+    "lon":77.6196329759,
+    "lat":12.9709333275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000920",
+    "NAME":"Byatarayanapura (Blry RD)",
+    "Ward_No":7,
+    "lon":77.5934274427,
+    "lat":13.0608777755,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000919",
+    "NAME":"BIAL Bus Stop",
+    "Ward_No":0,
+    "lon":77.7083862569,
+    "lat":13.1990616662,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000917",
+    "NAME":"Malleshwaram 18th Cross",
+    "Ward_No":45,
+    "lon":77.5689046795,
+    "lat":13.008696668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000916",
+    "NAME":"Halasuru (Ulsoor)",
+    "Ward_No":89,
+    "lon":77.6264546414,
+    "lat":12.9759249974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000915",
+    "NAME":"Taj Residency",
+    "Ward_No":90,
+    "lon":77.6200596457,
+    "lat":12.9744149974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000914",
+    "NAME":"Kogillu Cross",
+    "Ward_No":1,
+    "lon":77.6114513242,
+    "lat":13.1230433275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000913",
+    "NAME":"Jeevanbhima Nagar",
+    "Ward_No":88,
+    "lon":77.6579296191,
+    "lat":12.965708327,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000912",
+    "NAME":"Indira Nagar Police Station",
+    "Ward_No":80,
+    "lon":77.640122962,
+    "lat":12.9784083272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000910",
+    "NAME":"Lake Side Hospital",
+    "Ward_No":90,
+    "lon":77.6172896478,
+    "lat":12.9883483275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000909",
+    "NAME":"Bangalore Club (Richmond Circl",
+    "Ward_No":111,
+    "lon":77.599822989,
+    "lat":12.9676449977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000908",
+    "NAME":"Bowring Institute (SBI)",
+    "Ward_No":111,
+    "lon":77.6014329914,
+    "lat":12.9744499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000907",
+    "NAME":"Basaveshwara Circle (L.H.)",
+    "Ward_No":93,
+    "lon":77.5881996669,
+    "lat":12.9844999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000906",
+    "NAME":"Richmond Circle (Opp Bangalore",
+    "Ward_No":111,
+    "lon":77.59658855,
+    "lat":12.9650027755,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000905",
+    "NAME":"White Field Post Office",
+    "Ward_No":84,
+    "lon":77.7484228797,
+    "lat":12.9641133258,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000904",
+    "NAME":"Siddapur",
+    "Ward_No":84,
+    "lon":77.7323095626,
+    "lat":12.956349996,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000902",
+    "NAME":"Domlur",
+    "Ward_No":112,
+    "lon":77.6364996342,
+    "lat":12.9612333273,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000901",
+    "NAME":"Halasuru (Ulsoor) Lake",
+    "Ward_No":78,
+    "lon":77.6161563186,
+    "lat":12.9893733275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000900",
+    "NAME":"J.C. Nagar",
+    "Ward_No":35,
+    "lon":77.5924813345,
+    "lat":13.0069833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000898",
+    "NAME":"Koramangala Water tank",
+    "Ward_No":151,
+    "lon":77.6214496438,
+    "lat":12.9274499975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000897",
+    "NAME":"Madiwala (Check Post)",
+    "Ward_No":152,
+    "lon":77.6126296499,
+    "lat":12.9324183276,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000896",
+    "NAME":"Cunnighama Road",
+    "Ward_No":93,
+    "lon":77.5944829962,
+    "lat":12.9877333311,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000895",
+    "NAME":"Jn. of Koramangala 80ft RD",
+    "Ward_No":148,
+    "lon":77.6274496399,
+    "lat":12.9376833274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000894",
+    "NAME":"Koramangala (Jn. Ejipura RD)",
+    "Ward_No":114,
+    "lon":77.6333496359,
+    "lat":12.9386305529,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000893",
+    "NAME":"Dell Complex",
+    "Ward_No":112,
+    "lon":77.641382964,
+    "lat":12.9545333305,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000892",
+    "NAME":"Indian Express",
+    "Ward_No":110,
+    "lon":77.5970296611,
+    "lat":12.9837333277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000891",
+    "NAME":"HSR Layout (BDA Complex)",
+    "Ward_No":174,
+    "lon":77.6381163021,
+    "lat":12.9126666673,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000888",
+    "NAME":"DELL Complex (Hero Honda)",
+    "Ward_No":150,
+    "lon":77.6409301865,
+    "lat":12.9532722194,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000887",
+    "NAME":"M.G. RD (Manipal Centre)",
+    "Ward_No":90,
+    "lon":77.614380205,
+    "lat":12.9745111086,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000886",
+    "NAME":"GPO",
+    "Ward_No":110,
+    "lon":77.5954024399,
+    "lat":12.9814194422,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000884",
+    "NAME":"Bommanahalli",
+    "Ward_No":175,
+    "lon":77.6283013088,
+    "lat":12.9077416674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000883",
+    "NAME":"Central Silk Board (Hosur RD)",
+    "Ward_No":175,
+    "lon":77.6242163117,
+    "lat":12.9144833274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000882",
+    "NAME":"Agara",
+    "Ward_No":174,
+    "lon":77.6503146237,
+    "lat":12.9242749971,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000881",
+    "NAME":"Accenture",
+    "Ward_No":150,
+    "lon":77.6787596032,
+    "lat":12.9268799968,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000880",
+    "NAME":"Kalyananagar",
+    "Ward_No":25,
+    "lon":77.6383013042,
+    "lat":13.0262633272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000879",
+    "NAME":"Infosys (Parking Lot)",
+    "Ward_No":0,
+    "lon":77.6628646132,
+    "lat":12.850094997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000878",
+    "NAME":"Jn.of Sarjapur RD",
+    "Ward_No":174,
+    "lon":77.666537942,
+    "lat":12.9213516669,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000877",
+    "NAME":"Intel",
+    "Ward_No":150,
+    "lon":77.6795896025,
+    "lat":12.9274983267,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000876",
+    "NAME":"Marathahalli Bridge (ORR)",
+    "Ward_No":85,
+    "lon":77.7014940312,
+    "lat":12.9600583298,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000875",
+    "NAME":"Kalyananagar",
+    "Ward_No":29,
+    "lon":77.6380163044,
+    "lat":13.0260299972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000874",
+    "NAME":"Kempe Gowda Bus Station",
+    "Ward_No":94,
+    "lon":77.5723996768,
+    "lat":12.977499998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000873",
+    "NAME":"Hotel Grand Ashoka",
+    "Ward_No":93,
+    "lon":77.5827996705,
+    "lat":12.9914999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000872",
+    "NAME":"Chikkalasandra Bus Stand",
+    "Ward_No":182,
+    "lon":77.5518996884,
+    "lat":12.9151999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000871",
+    "NAME":"Padmanabhanagara",
+    "Ward_No":182,
+    "lon":77.5594996838,
+    "lat":12.9169999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000870",
+    "NAME":"Kathariguppe",
+    "Ward_No":164,
+    "lon":77.5536996875,
+    "lat":12.9237999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000869",
+    "NAME":"Rajajinagar/Navaranga",
+    "Ward_No":99,
+    "lon":77.5518996898,
+    "lat":12.9978999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000868",
+    "NAME":"Malleshwaram Bus Station",
+    "Ward_No":45,
+    "lon":77.5690996794,
+    "lat":13.008599998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000867",
+    "NAME":"Sadashivanagar Bhashyam Circle",
+    "Ward_No":35,
+    "lon":77.5796996727,
+    "lat":13.0059999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000866",
+    "NAME":"Kuvempu Nagar (BTM Layout)",
+    "Ward_No":176,
+    "lon":77.6161996472,
+    "lat":12.9161999975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000865",
+    "NAME":"Dalmiya Circle (J.P. Nagar 3rd",
+    "Ward_No":177,
+    "lon":77.5951163277,
+    "lat":12.9070999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000864",
+    "NAME":"Vijaya College",
+    "Ward_No":153,
+    "lon":77.5799996713,
+    "lat":12.9389999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000863",
+    "NAME":"Minerva Circle",
+    "Ward_No":143,
+    "lon":77.5799996716,
+    "lat":12.9541999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000861",
+    "NAME":"Hotel Windsor Manor (Le Meride",
+    "Ward_No":93,
+    "lon":77.585096339,
+    "lat":12.9940066678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000859",
+    "NAME":"Corporation (Kasturba Road)",
+    "Ward_No":110,
+    "lon":77.5866996675,
+    "lat":12.9682999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000858",
+    "NAME":"Hotel Le Meridean",
+    "Ward_No":93,
+    "lon":77.5860274461,
+    "lat":12.9902277756,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000857",
+    "NAME":"Esteem Mall",
+    "Ward_No":7,
+    "lon":77.5928885539,
+    "lat":13.0494944422,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000856",
+    "NAME":"Military Accounts Office (Trin",
+    "Ward_No":114,
+    "lon":77.620882975,
+    "lat":12.9667666674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000855",
+    "NAME":"Command Hospital",
+    "Ward_No":114,
+    "lon":77.6256496417,
+    "lat":12.9649499974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000853",
+    "NAME":"Hotel Leela Palace (Opp Royal",
+    "Ward_No":88,
+    "lon":77.647641293,
+    "lat":12.9600277749,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000852",
+    "NAME":"Borewell (Marathahali RD)",
+    "Ward_No":87,
+    "lon":77.6865995979,
+    "lat":12.9549333266,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000851",
+    "NAME":"Spice Garden",
+    "Ward_No":85,
+    "lon":77.7090162476,
+    "lat":12.956466663,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000850",
+    "NAME":"Kundalahalli Gate",
+    "Ward_No":85,
+    "lon":77.7148495764,
+    "lat":12.9563833263,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000848",
+    "NAME":"Marathalli Bridge",
+    "Ward_No":86,
+    "lon":77.7016995865,
+    "lat":12.9569833264,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000847",
+    "NAME":"HAL Main Gate (OPP)",
+    "Ward_No":87,
+    "lon":77.6651879438,
+    "lat":12.9584299969,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000846",
+    "NAME":"Diamond District",
+    "Ward_No":112,
+    "lon":77.6401329616,
+    "lat":12.9607166672,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000845",
+    "NAME":"Shivaji Nagar Bus Station",
+    "Ward_No":110,
+    "lon":77.6030329905,
+    "lat":12.9839499976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000844",
+    "NAME":"Vasanth Nagar (Ambedkar Bhavan",
+    "Ward_No":93,
+    "lon":77.594882996,
+    "lat":12.9925999977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000843",
+    "NAME":"Bamboo Bazaar",
+    "Ward_No":78,
+    "lon":77.6044163231,
+    "lat":12.9924999976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000842",
+    "NAME":"Coles RD (Jn. Of Netaji RD)",
+    "Ward_No":78,
+    "lon":77.6070996548,
+    "lat":12.9963333309,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000838",
+    "NAME":"Venketeshpuram01",
+    "Ward_No":31,
+    "lon":77.6150496497,
+    "lat":13.0106166642,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000835",
+    "NAME":"Thanisandra Petrol Bunk",
+    "Ward_No":24,
+    "lon":77.6262329762,
+    "lat":13.0442333307,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000834",
+    "NAME":"Sarai Palya (Vidyasagar Cross)",
+    "Ward_No":6,
+    "lon":77.6284829747,
+    "lat":13.047266664,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000833",
+    "NAME":"Ashwath Nagar (Telecom Colony)",
+    "Ward_No":6,
+    "lon":77.6311163063,
+    "lat":13.052416664,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000832",
+    "NAME":"RK Hegde nagar",
+    "Ward_No":6,
+    "lon":77.6337663049,
+    "lat":13.0732333306,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000831",
+    "NAME":"K Narayanapura Cross (RK Hegde",
+    "Ward_No":6,
+    "lon":77.6336829715,
+    "lat":13.0679499972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000830",
+    "NAME":"RAK Apartments",
+    "Ward_No":6,
+    "lon":77.6335496382,
+    "lat":13.0627666639,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000829",
+    "NAME":"Thinnasandra",
+    "Ward_No":6,
+    "lon":77.6329829718,
+    "lat":13.0561999973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000828",
+    "NAME":"Vidyasagar Cross (Sarai palya)",
+    "Ward_No":6,
+    "lon":77.6285996413,
+    "lat":13.047416664,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000827",
+    "NAME":"Thinnasandra Petrol Bunk",
+    "Ward_No":24,
+    "lon":77.6266829759,
+    "lat":13.0446333307,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000826",
+    "NAME":"Jn. Of Nagavara",
+    "Ward_No":24,
+    "lon":77.624449644,
+    "lat":13.0404333307,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000824",
+    "NAME":"Railway Gate (Frazer Town)",
+    "Ward_No":23,
+    "lon":77.6198496468,
+    "lat":13.0254666641,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000822",
+    "NAME":"P and T Colony",
+    "Ward_No":30,
+    "lon":77.6165329821,
+    "lat":13.0129833308,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000821",
+    "NAME":"CSI Hospital",
+    "Ward_No":78,
+    "lon":77.6046329896,
+    "lat":12.9917333309,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000820",
+    "NAME":"Gandhi Statue (Chinnaswami)",
+    "Ward_No":111,
+    "lon":77.5990996597,
+    "lat":12.9774499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000819",
+    "NAME":"Museum road",
+    "Ward_No":111,
+    "lon":77.5963496614,
+    "lat":12.9743499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000817",
+    "NAME":"Clarence School",
+    "Ward_No":60,
+    "lon":77.616432982,
+    "lat":13.0028499975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000816",
+    "NAME":"Charles School Bus Stop",
+    "Ward_No":59,
+    "lon":77.621032979,
+    "lat":13.0063333308,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000815",
+    "NAME":"Lingarajpura",
+    "Ward_No":49,
+    "lon":77.6256996426,
+    "lat":13.0123499974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000813",
+    "NAME":"Hennur (Bagalur RD)",
+    "Ward_No":24,
+    "lon":77.6337996374,
+    "lat":13.0291499973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000812",
+    "NAME":"Kothanur",
+    "Ward_No":25,
+    "lon":77.6488162942,
+    "lat":13.0615499971,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000811",
+    "NAME":"Church Cross (Bagalur RD)",
+    "Ward_No":0,
+    "lon":77.6547829572,
+    "lat":13.0885833303,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000810",
+    "NAME":"Kannur",
+    "Ward_No":5,
+    "lon":77.6542496244,
+    "lat":13.0930833303,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000809",
+    "NAME":"Tavakal Mosque",
+    "Ward_No":0,
+    "lon":77.664899617,
+    "lat":13.1059166635,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000808",
+    "NAME":"Chakkalatti",
+    "Ward_No":0,
+    "lon":77.6682329483,
+    "lat":13.1222833301,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000807",
+    "NAME":"Bagalur",
+    "Ward_No":0,
+    "lon":77.6679829488,
+    "lat":13.1345833301,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000806",
+    "NAME":"Hosur Bande",
+    "Ward_No":0,
+    "lon":77.6608662866,
+    "lat":13.1061166636,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000805",
+    "NAME":"Kadasonnapanahalli",
+    "Ward_No":5,
+    "lon":77.6581329551,
+    "lat":13.1014499969,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000804",
+    "NAME":"Byrthi Bande",
+    "Ward_No":54,
+    "lon":77.6533218469,
+    "lat":13.0777138859,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000803",
+    "NAME":"Bible College",
+    "Ward_No":54,
+    "lon":77.6515662925,
+    "lat":13.071499997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000802",
+    "NAME":"Gubbi Cross",
+    "Ward_No":25,
+    "lon":77.6516162923,
+    "lat":13.0641111081,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000801",
+    "NAME":"Geddalahalli",
+    "Ward_No":25,
+    "lon":77.6460496293,
+    "lat":13.0524499971,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000800",
+    "NAME":"Hennur Bande",
+    "Ward_No":24,
+    "lon":77.6409662992,
+    "lat":13.0368499972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000799",
+    "NAME":"Hennur Cross",
+    "Ward_No":24,
+    "lon":77.6359329693,
+    "lat":13.0315999972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000798",
+    "NAME":"Kacharakanahalli",
+    "Ward_No":29,
+    "lon":77.6299163065,
+    "lat":13.0210499973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000797",
+    "NAME":"Jyothi School",
+    "Ward_No":29,
+    "lon":77.6291663069,
+    "lat":13.015866664,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000795",
+    "NAME":"Siddagunta Palya",
+    "Ward_No":50,
+    "lon":77.654666292,
+    "lat":12.990149997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000794",
+    "NAME":"Tin Factory",
+    "Ward_No":56,
+    "lon":77.6691996116,
+    "lat":12.9970333268,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000793",
+    "NAME":"K.R. Puram Bus Stand",
+    "Ward_No":55,
+    "lon":77.6925773724,
+    "lat":13.0081611076,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000791",
+    "NAME":"Siddaguntapalya Cross",
+    "Ward_No":57,
+    "lon":77.6550829517,
+    "lat":12.990049997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000790",
+    "NAME":"Trinity Circle (TAJ RESIDENCY)",
+    "Ward_No":114,
+    "lon":77.6196329759,
+    "lat":12.9716166675,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000789",
+    "NAME":"Anepalya",
+    "Ward_No":117,
+    "lon":77.6052663218,
+    "lat":12.9514166643,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000788",
+    "NAME":"Adugodi",
+    "Ward_No":147,
+    "lon":77.6077968755,
+    "lat":12.9437638865,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000786",
+    "NAME":"St Johns Hospital",
+    "Ward_No":151,
+    "lon":77.6156663145,
+    "lat":12.9296666642,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000785",
+    "NAME":"Krupanidhi College",
+    "Ward_No":151,
+    "lon":77.6283496391,
+    "lat":12.9239999974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000784",
+    "NAME":"Madiwala Market",
+    "Ward_No":151,
+    "lon":77.6220163133,
+    "lat":12.9221666674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000783",
+    "NAME":"Koodlu Gate",
+    "Ward_No":190,
+    "lon":77.6400496303,
+    "lat":12.8892666673,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000782",
+    "NAME":"Singasandra",
+    "Ward_No":191,
+    "lon":77.647199625,
+    "lat":12.8770666672,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000781",
+    "NAME":"P.E.S. College",
+    "Ward_No":0,
+    "lon":77.6625662836,
+    "lat":12.858549997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000780",
+    "NAME":"Konappana Agarahara",
+    "Ward_No":0,
+    "lon":77.6653662815,
+    "lat":12.854999997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000779",
+    "NAME":"Electronic City (Hosur Rd)",
+    "Ward_No":0,
+    "lon":77.6713996069,
+    "lat":12.8474666669,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000778",
+    "NAME":"State Bank  (Electronic City)",
+    "Ward_No":0,
+    "lon":77.6652662814,
+    "lat":12.8455944414,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000775",
+    "NAME":"Ayyappaswami Temple (Madiwala)",
+    "Ward_No":172,
+    "lon":77.6183829758,
+    "lat":12.9240999975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000774",
+    "NAME":"ST John's Hospital",
+    "Ward_No":152,
+    "lon":77.615382978,
+    "lat":12.9288833275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000773",
+    "NAME":"Garuda Mall",
+    "Ward_No":111,
+    "lon":77.6051496556,
+    "lat":12.9700499976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000772",
+    "NAME":"M.G. Road (Mayo Hall)",
+    "Ward_No":111,
+    "lon":77.6097163226,
+    "lat":12.9732999976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000770",
+    "NAME":"Vivek Nagar Cross",
+    "Ward_No":115,
+    "lon":77.6207329748,
+    "lat":12.9520999974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000769",
+    "NAME":"Depot - 15",
+    "Ward_No":148,
+    "lon":77.6246163119,
+    "lat":12.9407666674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000767",
+    "NAME":"Ibbalur",
+    "Ward_No":174,
+    "lon":77.6629996146,
+    "lat":12.921249997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000766",
+    "NAME":"Junnasandara Gate",
+    "Ward_No":150,
+    "lon":77.6843329287,
+    "lat":12.9108833267,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000765",
+    "NAME":"Dodda Kannelli",
+    "Ward_No":150,
+    "lon":77.6973162588,
+    "lat":12.9066999965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000764",
+    "NAME":"Ambedkar Nagar (Sarjapura Rd)",
+    "Ward_No":0,
+    "lon":77.7130495765,
+    "lat":12.8992166663,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000763",
+    "NAME":"Kodathi Gate",
+    "Ward_No":0,
+    "lon":77.7204662406,
+    "lat":12.8965999962,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000762",
+    "NAME":"Shoole Kunte",
+    "Ward_No":0,
+    "lon":77.7284328942,
+    "lat":12.8924333261,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000761",
+    "NAME":"Choudenahall Gate",
+    "Ward_No":0,
+    "lon":77.7567328708,
+    "lat":12.8816361068,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000760",
+    "NAME":"Dommasandra Circle",
+    "Ward_No":0,
+    "lon":77.7536662133,
+    "lat":12.8796166657,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000759",
+    "NAME":"Chambenahalli Gate",
+    "Ward_No":0,
+    "lon":77.7615828667,
+    "lat":12.8793333256,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000758",
+    "NAME":"Yamare Village",
+    "Ward_No":0,
+    "lon":77.7664495325,
+    "lat":12.8722499956,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000757",
+    "NAME":"Sompura Gate",
+    "Ward_No":0,
+    "lon":77.7722661973,
+    "lat":12.8618666655,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000755",
+    "NAME":"Sarjapura",
+    "Ward_No":0,
+    "lon":77.7857161857,
+    "lat":12.8612833253,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000754",
+    "NAME":"Sonkad Gate",
+    "Ward_No":0,
+    "lon":77.7707661986,
+    "lat":12.8634833255,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000753",
+    "NAME":"Muttanalur Cross",
+    "Ward_No":0,
+    "lon":77.7390828855,
+    "lat":12.887283326,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000752",
+    "NAME":"Ambedkar Nagar",
+    "Ward_No":0,
+    "lon":77.7129995765,
+    "lat":12.8990833263,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000751",
+    "NAME":"Railway Gate (Sarjapura RD)",
+    "Ward_No":150,
+    "lon":77.7064995816,
+    "lat":12.9021333264,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000750",
+    "NAME":"Carmeleram College",
+    "Ward_No":150,
+    "lon":77.7039829136,
+    "lat":12.9034333264,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000749",
+    "NAME":"Kannelli",
+    "Ward_No":150,
+    "lon":77.6954662602,
+    "lat":12.9072166665,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000748",
+    "NAME":"Junnasandra Gate (Opp)",
+    "Ward_No":150,
+    "lon":77.6845495985,
+    "lat":12.9106833267,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000747",
+    "NAME":"Kaikondanahalli",
+    "Ward_No":150,
+    "lon":77.6776329337,
+    "lat":12.9139333268,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000746",
+    "NAME":"Parangi Palya",
+    "Ward_No":174,
+    "lon":77.6515662927,
+    "lat":12.9158666671,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000745",
+    "NAME":"H.S.R Layout 14th Main",
+    "Ward_No":174,
+    "lon":77.6489162945,
+    "lat":12.9157666671,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000744",
+    "NAME":"H.S.R BDA Complex",
+    "Ward_No":174,
+    "lon":77.6384163019,
+    "lat":12.9158666673,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000743",
+    "NAME":"Koramangala 4th Block (Maharaj",
+    "Ward_No":151,
+    "lon":77.6299329682,
+    "lat":12.9340499974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000742",
+    "NAME":"Maharaja Hotel",
+    "Ward_No":151,
+    "lon":77.6274996399,
+    "lat":12.9365999974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000739",
+    "NAME":"Vivek Nagar Church",
+    "Ward_No":115,
+    "lon":77.6210329746,
+    "lat":12.9518666674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000736",
+    "NAME":"Mico (West Gate)",
+    "Ward_No":146,
+    "lon":77.6029552121,
+    "lat":12.9424694421,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000735",
+    "NAME":"Apollo Hospital (Bannerghatta",
+    "Ward_No":152,
+    "lon":77.6005163278,
+    "lat":12.9274666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000733",
+    "NAME":"Arikere Gate",
+    "Ward_No":193,
+    "lon":77.5980496588,
+    "lat":12.8903166677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000732",
+    "NAME":"Loyala School Stop",
+    "Ward_No":192,
+    "lon":77.5933829915,
+    "lat":12.8705333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000731",
+    "NAME":"Koli Farm Gate",
+    "Ward_No":192,
+    "lon":77.5884996641,
+    "lat":12.8418666679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000730",
+    "NAME":"Bannerghatta Circle",
+    "Ward_No":0,
+    "lon":77.5814496682,
+    "lat":12.8138666679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000729",
+    "NAME":"Basavanapura Gate",
+    "Ward_No":192,
+    "lon":77.5881996644,
+    "lat":12.8462333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000728",
+    "NAME":"Bangalore Dairy Circle",
+    "Ward_No":152,
+    "lon":77.6013663274,
+    "lat":12.9352166677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000726",
+    "NAME":"Town Hall (N.R. RD)",
+    "Ward_No":119,
+    "lon":77.5837663393,
+    "lat":12.9635999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000724",
+    "NAME":"Yediyur",
+    "Ward_No":167,
+    "lon":77.5765663434,
+    "lat":12.9309499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000723",
+    "NAME":"Deepak Nursing Home",
+    "Ward_No":166,
+    "lon":77.576966343,
+    "lat":12.9252999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000721",
+    "NAME":"Dodda Kallasandra",
+    "Ward_No":197,
+    "lon":77.5559496855,
+    "lat":12.8855833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000719",
+    "NAME":"Muneeshwara Temple (Kanakapura",
+    "Ward_No":198,
+    "lon":77.5332496988,
+    "lat":12.8648166684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000718",
+    "NAME":"Tata Silk Farm",
+    "Ward_No":0,
+    "lon":77.5234330345,
+    "lat":12.8536999985,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000717",
+    "NAME":"Agara Gate (Kanakapura RD)",
+    "Ward_No":0,
+    "lon":77.5220330352,
+    "lat":12.8488666685,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000716",
+    "NAME":"Kuppareddykere",
+    "Ward_No":0,
+    "lon":77.5176830376,
+    "lat":12.8423333286,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000715",
+    "NAME":"Art of Living Ashrama",
+    "Ward_No":0,
+    "lon":77.5159330386,
+    "lat":12.8368166686,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000714",
+    "NAME":"Kaggalipura",
+    "Ward_No":0,
+    "lon":77.5089663821,
+    "lat":12.8025833287,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000713",
+    "NAME":"Salhunashe",
+    "Ward_No":0,
+    "lon":77.5115830407,
+    "lat":12.8109833286,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000712",
+    "NAME":"Udaya palya",
+    "Ward_No":0,
+    "lon":77.5135497097,
+    "lat":12.8202166686,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000711",
+    "NAME":"Saladoddi",
+    "Ward_No":0,
+    "lon":77.5129497102,
+    "lat":12.8302333286,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000710",
+    "NAME":"IB College",
+    "Ward_No":0,
+    "lon":77.5143663794,
+    "lat":12.8350666686,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000709",
+    "NAME":"Jyoti Farm",
+    "Ward_No":198,
+    "lon":77.5287163714,
+    "lat":12.8595999985,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000708",
+    "NAME":"Vajra gate",
+    "Ward_No":198,
+    "lon":77.5327830291,
+    "lat":12.8642666684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000707",
+    "NAME":"Thalagattarapura",
+    "Ward_No":198,
+    "lon":77.5366996969,
+    "lat":12.8693166684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000706",
+    "NAME":"Bayyanapalya",
+    "Ward_No":198,
+    "lon":77.5423663635,
+    "lat":12.8748499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000705",
+    "NAME":"Raghuvanahalli",
+    "Ward_No":198,
+    "lon":77.5460496914,
+    "lat":12.8805833283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000704",
+    "NAME":"Gubbalala Cross",
+    "Ward_No":197,
+    "lon":77.5507163586,
+    "lat":12.8840333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000703",
+    "NAME":"Konanakunte Cross",
+    "Ward_No":197,
+    "lon":77.5643496803,
+    "lat":12.8904166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000701",
+    "NAME":"Yelachana Halli",
+    "Ward_No":185,
+    "lon":77.5723496755,
+    "lat":12.898749998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000699",
+    "NAME":"Banashankari Bus Station",
+    "Ward_No":179,
+    "lon":77.5737996749,
+    "lat":12.917649998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000698",
+    "NAME":"South End Circle",
+    "Ward_No":167,
+    "lon":77.5800663412,
+    "lat":12.9360333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000697",
+    "NAME":"Gunasheela Nursing home",
+    "Ward_No":167,
+    "lon":77.5769330033,
+    "lat":12.9405333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000696",
+    "NAME":"Gandhi Bazaar",
+    "Ward_No":153,
+    "lon":77.5768996734,
+    "lat":12.9436333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000695",
+    "NAME":"Mahila Seva Samaj",
+    "Ward_No":143,
+    "lon":77.5765496737,
+    "lat":12.9519999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000694",
+    "NAME":"Town Hall",
+    "Ward_No":119,
+    "lon":77.5840663392,
+    "lat":12.9638499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000693",
+    "NAME":"Sirsi Circle (Mysore Road)",
+    "Ward_No":140,
+    "lon":77.5596996844,
+    "lat":12.9602499981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000692",
+    "NAME":"M.C.T.C Bus Stand  (Big Bazaar)",
+    "Ward_No":157,
+    "lon":77.5441496938,
+    "lat":12.9536333283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000690",
+    "NAME":"Kengeri Post Office (KST)",
+    "Ward_No":159,
+    "lon":77.4814163991,
+    "lat":12.9142499989,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000689",
+    "NAME":"Syndicate Bank (KST)",
+    "Ward_No":159,
+    "lon":77.4841163944,
+    "lat":12.9219999988,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000688",
+    "NAME":"Kengeri Sat Town (KST)",
+    "Ward_No":159,
+    "lon":77.4853663971,
+    "lat":12.9249333288,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000687",
+    "NAME":"Church (KST)",
+    "Ward_No":130,
+    "lon":77.4866330598,
+    "lat":12.9286166655,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000686",
+    "NAME":"Shirke Apartment (KST)",
+    "Ward_No":159,
+    "lon":77.4877663959,
+    "lat":12.9318833288,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000683",
+    "NAME":"Nayandanahalli",
+    "Ward_No":131,
+    "lon":77.5259997044,
+    "lat":12.9432333284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000682",
+    "NAME":"Bapuji Nagar",
+    "Ward_No":134,
+    "lon":77.5416663652,
+    "lat":12.9531666683,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000681",
+    "NAME":"Mysore Road Circle (Sirsi Circ",
+    "Ward_No":136,
+    "lon":77.5564663564,
+    "lat":12.9600833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000679",
+    "NAME":"Anandpura Stop",
+    "Ward_No":137,
+    "lon":77.5675830096,
+    "lat":12.963499998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000678",
+    "NAME":"Magadi Road (5th Ph)",
+    "Ward_No":121,
+    "lon":77.5596191292,
+    "lat":12.975713887,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000677",
+    "NAME":"Toll Gate (Magadi Road )",
+    "Ward_No":106,
+    "lon":77.549349691,
+    "lat":12.9741499982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000676",
+    "NAME":"Dasarahalli (Magadi RD)",
+    "Ward_No":105,
+    "lon":77.5417163656,
+    "lat":12.9784833283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000675",
+    "NAME":"K.H.B Colony (Mysore RD)",
+    "Ward_No":104,
+    "lon":77.5358163692,
+    "lat":12.9809333283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000674",
+    "NAME":"Summanahalli",
+    "Ward_No":73,
+    "lon":77.5187997092,
+    "lat":12.9873833285,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000673",
+    "NAME":"Kottigepalya",
+    "Ward_No":73,
+    "lon":77.5153663812,
+    "lat":12.9878166685,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000672",
+    "NAME":"Sunkadakatte",
+    "Ward_No":71,
+    "lon":77.5043830475,
+    "lat":12.9901666686,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000671",
+    "NAME":"Anjananagar",
+    "Ward_No":72,
+    "lon":77.4884163963,
+    "lat":12.9861333288,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000670",
+    "NAME":"Gollarahatti (Jn.of Nice Rd)",
+    "Ward_No":40,
+    "lon":77.4730164047,
+    "lat":12.9884833289,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000669",
+    "NAME":"Magadi Road (Raman Polytechnic",
+    "Ward_No":72,
+    "lon":77.478116402,
+    "lat":12.9860833289,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000668",
+    "NAME":"Bydarahalli",
+    "Ward_No":72,
+    "lon":77.4827663994,
+    "lat":12.9850833288,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000667",
+    "NAME":"Hero Halli Cross",
+    "Ward_No":72,
+    "lon":77.4932663937,
+    "lat":12.9876166687,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000666",
+    "NAME":"Kamakshipalya",
+    "Ward_No":101,
+    "lon":77.5291663732,
+    "lat":12.9839333284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000665",
+    "NAME":"Magadi Road (K.H.B Colony)",
+    "Ward_No":101,
+    "lon":77.5351996996,
+    "lat":12.9813666683,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000664",
+    "NAME":"Magadi Road (Dasarahalli)",
+    "Ward_No":105,
+    "lon":77.541083026,
+    "lat":12.9789333283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000663",
+    "NAME":"Magadi Road 10th Cross",
+    "Ward_No":122,
+    "lon":77.5572996861,
+    "lat":12.9756333281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000662",
+    "NAME":"Magadi Road 1st Cross",
+    "Ward_No":120,
+    "lon":77.5631163526,
+    "lat":12.9755666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000661",
+    "NAME":"CPRI Gate",
+    "Ward_No":35,
+    "lon":77.5768885702,
+    "lat":13.0151167733,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000659",
+    "NAME":"Widia Factory",
+    "Ward_No":40,
+    "lon":77.4959663931,
+    "lat":13.0491666687,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000658",
+    "NAME":"Chikkabidarakallu",
+    "Ward_No":0,
+    "lon":77.4876663977,
+    "lat":13.0521499988,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000657",
+    "NAME":"Anchepalya",
+    "Ward_No":0,
+    "lon":77.479816402,
+    "lat":13.0549666688,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000656",
+    "NAME":"T C I (Tumkur RD)",
+    "Ward_No":0,
+    "lon":77.4660830694,
+    "lat":13.058733329,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000655",
+    "NAME":"Adakamaranahalli",
+    "Ward_No":0,
+    "lon":77.4452997504,
+    "lat":13.0700666691,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000654",
+    "NAME":"Dasanapura",
+    "Ward_No":0,
+    "lon":77.4361164251,
+    "lat":13.0751333292,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000653",
+    "NAME":"Devayanapalya",
+    "Ward_No":0,
+    "lon":77.4276164294,
+    "lat":13.0785833293,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000652",
+    "NAME":"Arsinakunte",
+    "Ward_No":0,
+    "lon":77.4247497608,
+    "lat":13.0797166693,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000651",
+    "NAME":"T B stop (Nelamangala RD)",
+    "Ward_No":0,
+    "lon":77.4013831023,
+    "lat":13.0971999995,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000650",
+    "NAME":"Colony (Nelamangala)",
+    "Ward_No":0,
+    "lon":77.4054164404,
+    "lat":13.0942499994,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000648",
+    "NAME":"TATA Institute (IISC)",
+    "Ward_No":45,
+    "lon":77.5685330098,
+    "lat":13.012333328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000646",
+    "NAME":"Indian Express Circle",
+    "Ward_No":110,
+    "lon":77.5975329941,
+    "lat":12.984008331,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000645",
+    "NAME":"Jayamahal",
+    "Ward_No":63,
+    "lon":77.5951302182,
+    "lat":12.9999916644,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000644",
+    "NAME":"Munireddypalya (J.C Nagar)",
+    "Ward_No":35,
+    "lon":77.5935496638,
+    "lat":13.0039333277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000643",
+    "NAME":"Veterinary College (Hebbala)",
+    "Ward_No":20,
+    "lon":77.5864829988,
+    "lat":13.0294999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000642",
+    "NAME":"Hebbala (Canara Bank)",
+    "Ward_No":20,
+    "lon":77.5891829972,
+    "lat":13.0374666678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000641",
+    "NAME":"Kempapura",
+    "Ward_No":7,
+    "lon":77.5926496652,
+    "lat":13.0495666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000640",
+    "NAME":"Allalasandra (Level Crossing)",
+    "Ward_No":4,
+    "lon":77.5935329952,
+    "lat":13.0846666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000639",
+    "NAME":"Yelahanka Police Station",
+    "Ward_No":1,
+    "lon":77.594113554,
+    "lat":13.0952861088,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000638",
+    "NAME":"Yelahanka N.E.S Office",
+    "Ward_No":2,
+    "lon":77.5910329971,
+    "lat":13.0982666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000636",
+    "NAME":"Sharavathi Hotel (Yelahanka)",
+    "Ward_No":4,
+    "lon":77.5858330003,
+    "lat":13.0924999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000635",
+    "NAME":"Chikkabommasandra (New Town)",
+    "Ward_No":4,
+    "lon":77.5789496747,
+    "lat":13.0956333312,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000634",
+    "NAME":"Yelahanka (Sat Town) Bus stand",
+    "Ward_No":4,
+    "lon":77.5788996748,
+    "lat":13.0956999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000633",
+    "NAME":"Yelahanka Dairy Circle",
+    "Ward_No":3,
+    "lon":77.5767830095,
+    "lat":13.0997166645,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000631",
+    "NAME":"Chikkabommasandra",
+    "Ward_No":9,
+    "lon":77.5761663464,
+    "lat":13.0896666679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000630",
+    "NAME":"Yelahanka (13th Main RD)",
+    "Ward_No":4,
+    "lon":77.586333,
+    "lat":13.0929999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000629",
+    "NAME":"Kodigehalli Gate",
+    "Ward_No":7,
+    "lon":77.5935829981,
+    "lat":13.0574499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000628",
+    "NAME":"Military Dairy Farm Gate",
+    "Ward_No":7,
+    "lon":77.5935829947,
+    "lat":13.0574499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000626",
+    "NAME":"BRV Parade Ground (PHQ)",
+    "Ward_No":110,
+    "lon":77.6023496576,
+    "lat":12.9793833276,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000625",
+    "NAME":"Super Talkies",
+    "Ward_No":120,
+    "lon":77.5675330097,
+    "lat":12.967283328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000624",
+    "NAME":"Bull Temple RD",
+    "Ward_No":143,
+    "lon":77.5675330095,
+    "lat":12.956249998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000623",
+    "NAME":"Uma Theater",
+    "Ward_No":142,
+    "lon":77.5671496797,
+    "lat":12.953599998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000622",
+    "NAME":"Apex Bank",
+    "Ward_No":163,
+    "lon":77.5540163575,
+    "lat":12.9370333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000621",
+    "NAME":"Nagendra 4th Cross",
+    "Ward_No":162,
+    "lon":77.5520663587,
+    "lat":12.9372333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000619",
+    "NAME":"Avalahalli",
+    "Ward_No":158,
+    "lon":77.5385996969,
+    "lat":12.9393333283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000618",
+    "NAME":"Avalahalli BDA Complex",
+    "Ward_No":158,
+    "lon":77.5380830272,
+    "lat":12.9393833283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000617",
+    "NAME":"Girinagara",
+    "Ward_No":162,
+    "lon":77.5458858036,
+    "lat":12.9406111094,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000616",
+    "NAME":"Muneshwara Block 5th Main",
+    "Ward_No":162,
+    "lon":77.5423830246,
+    "lat":12.9387333283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000614",
+    "NAME":"Nirmala Stores",
+    "Ward_No":163,
+    "lon":77.5560330163,
+    "lat":12.9369666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000613",
+    "NAME":"Ganesh Bhavan",
+    "Ward_No":154,
+    "lon":77.5668796796,
+    "lat":12.938316668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000612",
+    "NAME":"Ramakrishna Ashrama",
+    "Ward_No":142,
+    "lon":77.5673163494,
+    "lat":12.942581668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000611",
+    "NAME":"Goodshed Road",
+    "Ward_No":139,
+    "lon":77.5682080126,
+    "lat":12.9679611091,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000610",
+    "NAME":"Vidhan Soudha",
+    "Ward_No":110,
+    "lon":77.5917663345,
+    "lat":12.9787333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000609",
+    "NAME":"K.R.Circle (Post Office RD)",
+    "Ward_No":110,
+    "lon":77.5857663383,
+    "lat":12.9752666678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000608",
+    "NAME":"Mysore Bank (Post Office Rd)",
+    "Ward_No":110,
+    "lon":77.5816663409,
+    "lat":12.9729499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000607",
+    "NAME":"Sujatha Talkies",
+    "Ward_No":96,
+    "lon":77.5627996829,
+    "lat":12.9824999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000606",
+    "NAME":"Ganeshgudi",
+    "Ward_No":132,
+    "lon":77.5285163731,
+    "lat":12.9573999984,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000605",
+    "NAME":"Vijayanagar (Depot-5)",
+    "Ward_No":125,
+    "lon":77.5376830279,
+    "lat":12.9718166683,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000604",
+    "NAME":"Gopalapuram",
+    "Ward_No":108,
+    "lon":77.5583996856,
+    "lat":12.9807833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000602",
+    "NAME":"Lalbagh West Gate",
+    "Ward_No":143,
+    "lon":77.5801163414,
+    "lat":12.9484999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000601",
+    "NAME":"Telephone Exchange",
+    "Ward_No":179,
+    "lon":77.5836163387,
+    "lat":12.9225999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000600",
+    "NAME":"J.P. Nagar (6th Ph)",
+    "Ward_No":178,
+    "lon":77.5759663433,
+    "lat":12.906483328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000599",
+    "NAME":"J.P.Nagar",
+    "Ward_No":178,
+    "lon":77.5776496722,
+    "lat":12.9063499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000598",
+    "NAME":"Indira Gandhi Circle",
+    "Ward_No":178,
+    "lon":77.5784996718,
+    "lat":12.9109333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000597",
+    "NAME":"Indiranagar 100 FT RD (6th Mai",
+    "Ward_No":80,
+    "lon":77.6410662979,
+    "lat":12.9743166639,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000596",
+    "NAME":"Doopanahalli",
+    "Ward_No":88,
+    "lon":77.6416162973,
+    "lat":12.9632999972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000595",
+    "NAME":"Domlur Bridge",
+    "Ward_No":112,
+    "lon":77.6413496307,
+    "lat":12.9583666672,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000594",
+    "NAME":"Koramangala (IIPM)",
+    "Ward_No":151,
+    "lon":77.6237329757,
+    "lat":12.9343666641,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000593",
+    "NAME":"Central Silk Board (BTM)",
+    "Ward_No":172,
+    "lon":77.6226329728,
+    "lat":12.9172833274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000592",
+    "NAME":"Raggigudda",
+    "Ward_No":177,
+    "lon":77.5937163321,
+    "lat":12.9167499978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000591",
+    "NAME":"Udipi Garden(Btm Layout 16th M",
+    "Ward_No":176,
+    "lon":77.6110329806,
+    "lat":12.9164833276,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000590",
+    "NAME":"Central Silk  Board Jn.",
+    "Ward_No":176,
+    "lon":77.6212996437,
+    "lat":12.9167166641,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000589",
+    "NAME":"Canara Bank (IIPM Koramangala)",
+    "Ward_No":151,
+    "lon":77.6238163124,
+    "lat":12.9344666674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000588",
+    "NAME":"Ncc Bridge (Koramangala)",
+    "Ward_No":148,
+    "lon":77.6291163055,
+    "lat":12.9384333307,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000587",
+    "NAME":"Ejipura Jn. (Srinivasagilu)",
+    "Ward_No":148,
+    "lon":77.6325663064,
+    "lat":12.9384499973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000586",
+    "NAME":"Thippasandra Cross",
+    "Ward_No":58,
+    "lon":77.6468996271,
+    "lat":12.9743499971,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000585",
+    "NAME":"Jeevan Bhima Nagar Police Stat",
+    "Ward_No":58,
+    "lon":77.6554329543,
+    "lat":12.9676166637,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000584",
+    "NAME":"Srinagar",
+    "Ward_No":156,
+    "lon":77.5546330172,
+    "lat":12.9441999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000583",
+    "NAME":"Apex Bank (Srinagar)",
+    "Ward_No":156,
+    "lon":77.5550830169,
+    "lat":12.9418999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000582",
+    "NAME":"Mysore Bank Colony",
+    "Ward_No":156,
+    "lon":77.5527830183,
+    "lat":12.9387333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000581",
+    "NAME":"Kattriguppe",
+    "Ward_No":163,
+    "lon":77.5502996896,
+    "lat":12.9252333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000580",
+    "NAME":"Kamakya (Depot-13)",
+    "Ward_No":164,
+    "lon":77.5541163572,
+    "lat":12.9237666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000579",
+    "NAME":"Devegowda Petrol Bunk",
+    "Ward_No":165,
+    "lon":77.5602996834,
+    "lat":12.9223833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000578",
+    "NAME":"Kims Hospital",
+    "Ward_No":165,
+    "lon":77.5643330109,
+    "lat":12.9245666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000577",
+    "NAME":"Jayanagar Water Tank",
+    "Ward_No":171,
+    "lon":77.6066996535,
+    "lat":12.9167333276,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000576",
+    "NAME":"Udupi Garden",
+    "Ward_No":172,
+    "lon":77.6106885398,
+    "lat":12.9166416642,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000575",
+    "NAME":"Kuvempu Nagar (BTM)",
+    "Ward_No":172,
+    "lon":77.6157663175,
+    "lat":12.9164333275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000574",
+    "NAME":"Madiwal Ayyappa Temple",
+    "Ward_No":151,
+    "lon":77.6189663154,
+    "lat":12.9232999975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000573",
+    "NAME":"Kendriya Sadhan",
+    "Ward_No":151,
+    "lon":77.6206496444,
+    "lat":12.9267666675,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000572",
+    "NAME":"Koramangala (BDA Complex)",
+    "Ward_No":151,
+    "lon":77.6222329734,
+    "lat":12.9308499974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000571",
+    "NAME":"Koramangala (Opp Oasis Mall)",
+    "Ward_No":148,
+    "lon":77.6276996398,
+    "lat":12.9378333274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000570",
+    "NAME":"Hero Honda",
+    "Ward_No":112,
+    "lon":77.6413329607,
+    "lat":12.9552166672,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000569",
+    "NAME":"Indiranagar 100 FT RD (13th Ma",
+    "Ward_No":88,
+    "lon":77.6413496309,
+    "lat":12.9685499972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000568",
+    "NAME":"Thippasandra Market",
+    "Ward_No":58,
+    "lon":77.6507496244,
+    "lat":12.9724499971,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000567",
+    "NAME":"DRDO (CV Raman Nagar)",
+    "Ward_No":57,
+    "lon":77.6610162873,
+    "lat":12.984366667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000566",
+    "NAME":"C V  Raman Nagara",
+    "Ward_No":57,
+    "lon":77.6640162852,
+    "lat":12.9856499969,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000565",
+    "NAME":"DRDO Gate",
+    "Ward_No":58,
+    "lon":77.6580496194,
+    "lat":12.981183327,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000564",
+    "NAME":"LRD Camp",
+    "Ward_No":58,
+    "lon":77.6549329516,
+    "lat":12.980066667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000563",
+    "NAME":"CGHS",
+    "Ward_No":58,
+    "lon":77.6537412891,
+    "lat":12.9786666637,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000562",
+    "NAME":"BEML Gate (Thippasandra)",
+    "Ward_No":58,
+    "lon":77.6555162911,
+    "lat":12.976099997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000561",
+    "NAME":"State Bank (Jeevan Bhimanagar)",
+    "Ward_No":87,
+    "lon":77.6612662868,
+    "lat":12.966816667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000560",
+    "NAME":"Jeevan Bhima Nagar Bus Stand",
+    "Ward_No":88,
+    "lon":77.6578662859,
+    "lat":12.9659666637,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000559",
+    "NAME":"Petrol Pump (Indiranagara)",
+    "Ward_No":58,
+    "lon":77.6546496215,
+    "lat":12.967683327,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000558",
+    "NAME":"C.M.H Hospital",
+    "Ward_No":80,
+    "lon":77.6461162978,
+    "lat":12.9784166671,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000557",
+    "NAME":"Indiranagar Police station",
+    "Ward_No":80,
+    "lon":77.6409329614,
+    "lat":12.9772833272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000556",
+    "NAME":"Indiranagar 6th Main",
+    "Ward_No":80,
+    "lon":77.6411663012,
+    "lat":12.9740333272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000555",
+    "NAME":"Indiranagar 13th Main Road",
+    "Ward_No":88,
+    "lon":77.6414163009,
+    "lat":12.9681999972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000554",
+    "NAME":"Yarabnagar",
+    "Ward_No":166,
+    "lon":77.5694496776,
+    "lat":12.915749998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000553",
+    "NAME":"Banashankari (Mono Type)",
+    "Ward_No":166,
+    "lon":77.5703246771,
+    "lat":12.9223055536,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000552",
+    "NAME":"Banashankari (B.D.A. Complex)",
+    "Ward_No":165,
+    "lon":77.5646996807,
+    "lat":12.9245833314,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000551",
+    "NAME":"Sitha circle",
+    "Ward_No":162,
+    "lon":77.5495330202,
+    "lat":12.9376833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000550",
+    "NAME":"Mysore Bank Colony (Girinagara",
+    "Ward_No":163,
+    "lon":77.553316358,
+    "lat":12.9385333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000549",
+    "NAME":"Srinivasa Nagar",
+    "Ward_No":163,
+    "lon":77.556499686,
+    "lat":12.9381499982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000548",
+    "NAME":"Srinagar",
+    "Ward_No":156,
+    "lon":77.5546830172,
+    "lat":12.9442999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000547",
+    "NAME":"Shastri Bakery",
+    "Ward_No":179,
+    "lon":77.5738330049,
+    "lat":12.923149998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000546",
+    "NAME":"Kaveri Nagar",
+    "Ward_No":165,
+    "lon":77.5690830079,
+    "lat":12.919199998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000545",
+    "NAME":"Dayananda College (ISRO)",
+    "Ward_No":181,
+    "lon":77.5657663498,
+    "lat":12.9095666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000544",
+    "NAME":"Kumarswamy Layout Police Stati",
+    "Ward_No":181,
+    "lon":77.5629996814,
+    "lat":12.9056166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000543",
+    "NAME":"Kumarswamy Layout Bus Stand",
+    "Ward_No":181,
+    "lon":77.5617996821,
+    "lat":12.9030499981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000542",
+    "NAME":"Kims Hospital/Makkal Koota",
+    "Ward_No":119,
+    "lon":77.5749496749,
+    "lat":12.960783328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000540",
+    "NAME":"Kalasipalayam",
+    "Ward_No":119,
+    "lon":77.5775830066,
+    "lat":12.9638999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000539",
+    "NAME":"Mahila Samaj",
+    "Ward_No":142,
+    "lon":77.5735996756,
+    "lat":12.953049998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000538",
+    "NAME":"National College",
+    "Ward_No":142,
+    "lon":77.5737663455,
+    "lat":12.949699998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000537",
+    "NAME":"M.M.Industries",
+    "Ward_No":166,
+    "lon":77.5736830051,
+    "lat":12.929216668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000536",
+    "NAME":"Chikkalasandra",
+    "Ward_No":184,
+    "lon":77.5482830239,
+    "lat":12.9084166649,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000535",
+    "NAME":"Sarige Nagar",
+    "Ward_No":184,
+    "lon":77.5457663587,
+    "lat":12.9068999983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000534",
+    "NAME":"Uttarahalli Bus stand",
+    "Ward_No":184,
+    "lon":77.5433996934,
+    "lat":12.9049999983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000533",
+    "NAME":"Bank Colony",
+    "Ward_No":197,
+    "lon":77.5503663559,
+    "lat":12.9099166649,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000532",
+    "NAME":"Chikkalasandra Cross",
+    "Ward_No":197,
+    "lon":77.5522996881,
+    "lat":12.9116999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000531",
+    "NAME":"Hunasemara",
+    "Ward_No":179,
+    "lon":77.5742330046,
+    "lat":12.919849998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000530",
+    "NAME":"M M Industries",
+    "Ward_No":166,
+    "lon":77.5736830085,
+    "lat":12.9292166646,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000529",
+    "NAME":"Basavanagudi Police Station",
+    "Ward_No":154,
+    "lon":77.5737496753,
+    "lat":12.9421166646,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000528",
+    "NAME":"National College (K.R. RD)",
+    "Ward_No":142,
+    "lon":77.5736996755,
+    "lat":12.949649998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000527",
+    "NAME":"Mahila Samaj (K.R. RD)",
+    "Ward_No":142,
+    "lon":77.5736663456,
+    "lat":12.953049998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000526",
+    "NAME":"Makkala Koota",
+    "Ward_No":143,
+    "lon":77.5735996757,
+    "lat":12.957299998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000525",
+    "NAME":"Kalasipalyam Bus Stand",
+    "Ward_No":119,
+    "lon":77.5766496739,
+    "lat":12.9636333313,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000522",
+    "NAME":"Kenchana halli",
+    "Ward_No":160,
+    "lon":77.5156663769,
+    "lat":12.9317666652,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000521",
+    "NAME":"Kanakadas Circle (Double road)",
+    "Ward_No":160,
+    "lon":77.520699707,
+    "lat":12.9146333318,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000520",
+    "NAME":"BEML 5th Stage",
+    "Ward_No":160,
+    "lon":77.5210663734,
+    "lat":12.9099666652,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000519",
+    "NAME":"Channasandra (Swathi Clinic)",
+    "Ward_No":160,
+    "lon":77.5210497066,
+    "lat":12.9043833318,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000518",
+    "NAME":"Channasandra layout",
+    "Ward_No":160,
+    "lon":77.5169663757,
+    "lat":12.9031999985,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000517",
+    "NAME":"Srinivasa pura",
+    "Ward_No":198,
+    "lon":77.5085997138,
+    "lat":12.9038499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000516",
+    "NAME":"Channasandra layout (Uttarahal",
+    "Ward_No":160,
+    "lon":77.5158663763,
+    "lat":12.9033999986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000515",
+    "NAME":"Channasandra (Uttarahalli RD)",
+    "Ward_No":160,
+    "lon":77.5206663735,
+    "lat":12.9026499985,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000514",
+    "NAME":"BEML Complex",
+    "Ward_No":160,
+    "lon":77.5203497073,
+    "lat":12.9194166652,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000513",
+    "NAME":"R.R. Petrol Bunk",
+    "Ward_No":160,
+    "lon":77.5161497099,
+    "lat":12.9327833319,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000511",
+    "NAME":"Nayanda halli",
+    "Ward_No":160,
+    "lon":77.5263782138,
+    "lat":12.9434720597,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000510",
+    "NAME":"Quality Biscuits Factory",
+    "Ward_No":158,
+    "lon":77.5311663681,
+    "lat":12.9468722206,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000508",
+    "NAME":"Sirsi Circle",
+    "Ward_No":140,
+    "lon":77.5595330178,
+    "lat":12.9602666648,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000507",
+    "NAME":"Ryan Circle",
+    "Ward_No":139,
+    "lon":77.5680663459,
+    "lat":12.9604833314,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000506",
+    "NAME":"Binny Mill",
+    "Ward_No":94,
+    "lon":77.5711330109,
+    "lat":12.9775833313,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000505",
+    "NAME":"Central (Rajiv Gandhi Circle)",
+    "Ward_No":77,
+    "lon":77.5712830078,
+    "lat":12.996749998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000504",
+    "NAME":"Widia School",
+    "Ward_No":14,
+    "lon":77.5077163832,
+    "lat":13.0507666653,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000503",
+    "NAME":"Saptagiri College",
+    "Ward_No":14,
+    "lon":77.5032497193,
+    "lat":13.0666999986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000502",
+    "NAME":"Apartment (Nelamangala)",
+    "Ward_No":12,
+    "lon":77.5029997196,
+    "lat":13.073233332,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000501",
+    "NAME":"Chikka Banavara",
+    "Ward_No":0,
+    "lon":77.5002497212,
+    "lat":13.0818499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000500",
+    "NAME":"Sante Maidan (Tumkur Road)",
+    "Ward_No":0,
+    "lon":77.5024330533,
+    "lat":13.080433332,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000499",
+    "NAME":"Railway Gate (Chikka Banavara",
+    "Ward_No":12,
+    "lon":77.5047163853,
+    "lat":13.0755499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000498",
+    "NAME":"Saptagiri College",
+    "Ward_No":12,
+    "lon":77.5033330526,
+    "lat":13.0668499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000497",
+    "NAME":"Bone Mill",
+    "Ward_No":14,
+    "lon":77.5050497183,
+    "lat":13.0638999986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000496",
+    "NAME":"Bagal Gunte",
+    "Ward_No":14,
+    "lon":77.5071330503,
+    "lat":13.0573166653,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000494",
+    "NAME":"Link Road (Seshadripuram)",
+    "Ward_No":77,
+    "lon":77.5738496762,
+    "lat":12.9943833279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000493",
+    "NAME":"R M C (Yeshwanthpura)",
+    "Ward_No":44,
+    "lon":77.5476330228,
+    "lat":13.0243666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000491",
+    "NAME":"S R S Kalyanamanatapa",
+    "Ward_No":38,
+    "lon":77.5306497031,
+    "lat":13.0341166684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000490",
+    "NAME":"Peenya (1st Stage)",
+    "Ward_No":38,
+    "lon":77.5251663763,
+    "lat":13.0361333284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000489",
+    "NAME":"Morrison Factory",
+    "Ward_No":40,
+    "lon":77.4922997252,
+    "lat":13.0504499987,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000488",
+    "NAME":"Jindal Factory",
+    "Ward_No":0,
+    "lon":77.4838163998,
+    "lat":13.0533999988,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000487",
+    "NAME":"Madavara",
+    "Ward_No":0,
+    "lon":77.4740164052,
+    "lat":13.0566333289,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000486",
+    "NAME":"Vishwashanti Ashrama",
+    "Ward_No":0,
+    "lon":77.4189330937,
+    "lat":13.0828166693,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000485",
+    "NAME":"Nelamangala",
+    "Ward_No":0,
+    "lon":77.3945331056,
+    "lat":13.0980499995,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000484",
+    "NAME":"Janapriya  Apartment (Nelamang",
+    "Ward_No":0,
+    "lon":77.4078997692,
+    "lat":13.0915166694,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000483",
+    "NAME":"Ashrama (Tumkur RD)",
+    "Ward_No":0,
+    "lon":77.4166664348,
+    "lat":13.0844333293,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000482",
+    "NAME":"Makali",
+    "Ward_No":0,
+    "lon":77.4532330762,
+    "lat":13.0658833291,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000481",
+    "NAME":"Madanayakanahalli",
+    "Ward_No":0,
+    "lon":77.4610164121,
+    "lat":13.061383329,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000480",
+    "NAME":"Jindal Factory (Tumkur RD)",
+    "Ward_No":0,
+    "lon":77.4844830595,
+    "lat":13.0535166688,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000479",
+    "NAME":"Morrison",
+    "Ward_No":0,
+    "lon":77.4922330552,
+    "lat":13.0507166687,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000477",
+    "NAME":"Peenya 1st",
+    "Ward_No":38,
+    "lon":77.5253663762,
+    "lat":13.0362333284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000476",
+    "NAME":"S R S (Tumkur RD)",
+    "Ward_No":38,
+    "lon":77.5303830333,
+    "lat":13.0345166684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000474",
+    "NAME":"Goragunte Palya",
+    "Ward_No":38,
+    "lon":77.5399996975,
+    "lat":13.0289499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000472",
+    "NAME":"Yeshwantpur R M C",
+    "Ward_No":38,
+    "lon":77.5525163598,
+    "lat":13.0205666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000471",
+    "NAME":"Govardhana Talkies",
+    "Ward_No":45,
+    "lon":77.557066357,
+    "lat":13.0177499981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000470",
+    "NAME":"Yeshwantapura",
+    "Ward_No":45,
+    "lon":77.5584996861,
+    "lat":13.0181666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000468",
+    "NAME":"Carmel Convent (Jayanagara Eas",
+    "Ward_No":168,
+    "lon":77.5929329928,
+    "lat":12.9270333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000467",
+    "NAME":"Sanjay Gandhi Hospital",
+    "Ward_No":168,
+    "lon":77.5969329902,
+    "lat":12.9269166677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000466",
+    "NAME":"Jayanagar Bus Station",
+    "Ward_No":168,
+    "lon":77.5835663355,
+    "lat":12.9272166645,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000464",
+    "NAME":"Ashoka Pillar (Kankanapalya Rd",
+    "Ward_No":153,
+    "lon":77.5846163384,
+    "lat":12.9436499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000463",
+    "NAME":"Lalbagh West Gate (Minerva Cir",
+    "Ward_No":143,
+    "lon":77.5800330016,
+    "lat":12.9539999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000462",
+    "NAME":"Devaiah park Bus Stop",
+    "Ward_No":76,
+    "lon":77.5623830134,
+    "lat":12.9965833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000461",
+    "NAME":"Shankar Matha Bus Stop",
+    "Ward_No":75,
+    "lon":77.5400830269,
+    "lat":12.9962666683,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000460",
+    "NAME":"Basaveshwara Nagar Water Tank",
+    "Ward_No":74,
+    "lon":77.5387663676,
+    "lat":12.9927499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000459",
+    "NAME":"Basaveshwara Nagar 8th Main",
+    "Ward_No":108,
+    "lon":77.5597219071,
+    "lat":12.9866666648,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000458",
+    "NAME":"Mariyappana Palya",
+    "Ward_No":76,
+    "lon":77.5603830146,
+    "lat":12.9971499981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000457",
+    "NAME":"Harishchandra Ghat",
+    "Ward_No":76,
+    "lon":77.5623996834,
+    "lat":12.9965166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000456",
+    "NAME":"Malleshwaram Circle Kuvempu Na",
+    "Ward_No":77,
+    "lon":77.5738496762,
+    "lat":12.9942999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000455",
+    "NAME":"Pipe line (Seshadripuram)",
+    "Ward_No":77,
+    "lon":77.5738663462,
+    "lat":12.9941166679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000452",
+    "NAME":"Jayanagar East End",
+    "Ward_No":170,
+    "lon":77.59686633,
+    "lat":12.9169666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000451",
+    "NAME":"ITI Layout (MS Ramaiah Hospita",
+    "Ward_No":35,
+    "lon":77.5686163501,
+    "lat":13.033833328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000450",
+    "NAME":"Kuvempu Circle",
+    "Ward_No":10,
+    "lon":77.557816357,
+    "lat":13.0437666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000449",
+    "NAME":"Doddabommasandra",
+    "Ward_No":10,
+    "lon":77.5591830164,
+    "lat":13.0587166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000448",
+    "NAME":"Chamundeswari Layout",
+    "Ward_No":10,
+    "lon":77.5594996863,
+    "lat":13.0647833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000447",
+    "NAME":"Vidyaranyapura 1st Block",
+    "Ward_No":9,
+    "lon":77.5553496889,
+    "lat":13.0701166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000446",
+    "NAME":"Canara Bank (Vidyaranyapura)",
+    "Ward_No":9,
+    "lon":77.5553108001,
+    "lat":13.070063887,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000445",
+    "NAME":"Vidyaranyapura Post Office",
+    "Ward_No":9,
+    "lon":77.5582163573,
+    "lat":13.0762999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000444",
+    "NAME":"Echala Mara (Vidyaranyapura)",
+    "Ward_No":9,
+    "lon":77.5592635756,
+    "lat":13.0795972203,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000443",
+    "NAME":"Vidyaranyapura Bus Station",
+    "Ward_No":9,
+    "lon":77.5603996861,
+    "lat":13.0838666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000442",
+    "NAME":"Nagaland Stage",
+    "Ward_No":10,
+    "lon":77.5575024652,
+    "lat":13.0559694425,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000441",
+    "NAME":"BEL Hospital",
+    "Ward_No":10,
+    "lon":77.5575163573,
+    "lat":13.0500833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000439",
+    "NAME":"Malleshwaram 8th Cross",
+    "Ward_No":65,
+    "lon":77.5692663492,
+    "lat":13.000299998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000438",
+    "NAME":"Electronic City",
+    "Ward_No":0,
+    "lon":77.6718329366,
+    "lat":12.8469166669,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000437",
+    "NAME":"Christ College",
+    "Ward_No":152,
+    "lon":77.6074163234,
+    "lat":12.9359999976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000436",
+    "NAME":"Lakkasandra",
+    "Ward_No":144,
+    "lon":77.5970663304,
+    "lat":12.9440999977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000435",
+    "NAME":"Wilson Garden 10th Cross",
+    "Ward_No":145,
+    "lon":77.5958663312,
+    "lat":12.9463666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000433",
+    "NAME":"Shanthinagar Bus Station",
+    "Ward_No":145,
+    "lon":77.5923329937,
+    "lat":12.9544183278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000432",
+    "NAME":"Corporation (Pallavi theater)",
+    "Ward_No":110,
+    "lon":77.5912996646,
+    "lat":12.9679666678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000431",
+    "NAME":"Malleshwaram 6th Cross",
+    "Ward_No":65,
+    "lon":77.5692663491,
+    "lat":12.9974833313,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000430",
+    "NAME":"Malleshwaram 15th Cross",
+    "Ward_No":65,
+    "lon":77.571199678,
+    "lat":13.004633328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000429",
+    "NAME":"TATA Institute Gate",
+    "Ward_No":35,
+    "lon":77.5669830108,
+    "lat":13.014249998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000428",
+    "NAME":"Ramaiah Hospital",
+    "Ward_No":35,
+    "lon":77.5717330081,
+    "lat":13.027149998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000427",
+    "NAME":"Dollars Colony (Devesandra)",
+    "Ward_No":35,
+    "lon":77.5665830114,
+    "lat":13.036199998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000426",
+    "NAME":"BHEL circle",
+    "Ward_No":10,
+    "lon":77.5566163577,
+    "lat":13.0460666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000425",
+    "NAME":"BHEL Hospital",
+    "Ward_No":10,
+    "lon":77.5575330172,
+    "lat":13.0490333281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000424",
+    "NAME":"Nanjappa circle",
+    "Ward_No":10,
+    "lon":77.5574330176,
+    "lat":13.0689499981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000423",
+    "NAME":"BV Balige Circle",
+    "Ward_No":10,
+    "lon":77.5578663572,
+    "lat":13.0559333281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000421",
+    "NAME":"BEL Circle",
+    "Ward_No":10,
+    "lon":77.5565663578,
+    "lat":13.0453666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000420",
+    "NAME":"Devasandra",
+    "Ward_No":35,
+    "lon":77.565783012,
+    "lat":13.037033328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000419",
+    "NAME":"M.S. Ramaiah Hospital",
+    "Ward_No":35,
+    "lon":77.5717496781,
+    "lat":13.027166668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000418",
+    "NAME":"Sadashivanagar Police Station",
+    "Ward_No":35,
+    "lon":77.5724218997,
+    "lat":13.0163916646,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000417",
+    "NAME":"TATA Institute",
+    "Ward_No":35,
+    "lon":77.5709052339,
+    "lat":13.0144194424,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000416",
+    "NAME":"Malleshwaram 13th cross",
+    "Ward_No":65,
+    "lon":77.5693830091,
+    "lat":13.004233328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000415",
+    "NAME":"Malleshwaram 10th Cross",
+    "Ward_No":65,
+    "lon":77.5692663492,
+    "lat":13.001049998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000414",
+    "NAME":"Malleshwaram circle",
+    "Ward_No":65,
+    "lon":77.5692996791,
+    "lat":12.998249998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000413",
+    "NAME":"Maharani collage",
+    "Ward_No":110,
+    "lon":77.5855663384,
+    "lat":12.9771166678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000412",
+    "NAME":"Subaiah Circle",
+    "Ward_No":110,
+    "lon":77.5909996647,
+    "lat":12.9626166678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000411",
+    "NAME":"Wilson Garden 12th Cross",
+    "Ward_No":145,
+    "lon":77.5981329898,
+    "lat":12.9474499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000410",
+    "NAME":"Cauvery  Bhavan",
+    "Ward_No":94,
+    "lon":77.581516341,
+    "lat":12.9737333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000409",
+    "NAME":"High Ground Police station",
+    "Ward_No":110,
+    "lon":77.5884996667,
+    "lat":12.9836833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000408",
+    "NAME":"Mekhri Circle West",
+    "Ward_No":35,
+    "lon":77.5833994854,
+    "lat":13.0148278783,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000407",
+    "NAME":"ESCORTS",
+    "Ward_No":2,
+    "lon":77.5904329975,
+    "lat":13.0987499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000406",
+    "NAME":"Honnena halli",
+    "Ward_No":0,
+    "lon":77.565949684,
+    "lat":13.162883328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000405",
+    "NAME":"Sriramapura cross",
+    "Ward_No":0,
+    "lon":77.5632330162,
+    "lat":13.191599998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000404",
+    "NAME":"Suradevanapura Cross",
+    "Ward_No":0,
+    "lon":77.5588996891,
+    "lat":13.204516668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000403",
+    "NAME":"Marasandra Cross",
+    "Ward_No":0,
+    "lon":77.5572830201,
+    "lat":13.207783328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000402",
+    "NAME":"Mazar Hosahalli Cross",
+    "Ward_No":0,
+    "lon":77.5505663646,
+    "lat":13.2341166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000401",
+    "NAME":"Doddaballapura Railway Station",
+    "Ward_No":0,
+    "lon":77.5517163646,
+    "lat":13.2780833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000400",
+    "NAME":"Doddaballapura Govt hospital",
+    "Ward_No":0,
+    "lon":77.5442330293,
+    "lat":13.2924999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000399",
+    "NAME":"Doddaballapura Bus Station (Ol",
+    "Ward_No":0,
+    "lon":77.5422163705,
+    "lat":13.2932999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000398",
+    "NAME":"Doddaballapura Arali Katte Cir",
+    "Ward_No":0,
+    "lon":77.5435996997,
+    "lat":13.2936833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000397",
+    "NAME":"Doddaballapura Industrial Area",
+    "Ward_No":0,
+    "lon":77.5516163647,
+    "lat":13.2800499981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000396",
+    "NAME":"Navodaya/Bombay Ryan Factory",
+    "Ward_No":0,
+    "lon":77.5521330242,
+    "lat":13.2693166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000395",
+    "NAME":"Bashettyhalli Bank",
+    "Ward_No":0,
+    "lon":77.5520663643,
+    "lat":13.2702166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000394",
+    "NAME":"Yellapura/Mazar hosahalli Cros",
+    "Ward_No":0,
+    "lon":77.5527830237,
+    "lat":13.2576666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000393",
+    "NAME":"Rajan kunte",
+    "Ward_No":0,
+    "lon":77.5638663556,
+    "lat":13.181816668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000392",
+    "NAME":"Singanayakanahalli",
+    "Ward_No":0,
+    "lon":77.5672163532,
+    "lat":13.157299998,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000391",
+    "NAME":"Avalahalli (Doddaballapur Rd)",
+    "Ward_No":0,
+    "lon":77.5696163514,
+    "lat":13.1442999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000390",
+    "NAME":"Nagenahalli Gate",
+    "Ward_No":2,
+    "lon":77.5707163505,
+    "lat":13.1314499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000389",
+    "NAME":"C.R.P.F (Doddaballapur RD)",
+    "Ward_No":2,
+    "lon":77.5736830086,
+    "lat":13.1260499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000388",
+    "NAME":"Ananthapura Gate",
+    "Ward_No":2,
+    "lon":77.5789524529,
+    "lat":13.1150055534,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000387",
+    "NAME":"Puttenahalli",
+    "Ward_No":2,
+    "lon":77.5801163443,
+    "lat":13.1103333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000386",
+    "NAME":"Railway Wheel Factory",
+    "Ward_No":2,
+    "lon":77.5802163442,
+    "lat":13.1099499978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000385",
+    "NAME":"Kaveri Bhavan",
+    "Ward_No":110,
+    "lon":77.5812996711,
+    "lat":12.9732833279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000383",
+    "NAME":"Nanda Talkies",
+    "Ward_No":167,
+    "lon":77.5801663411,
+    "lat":12.9333999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000382",
+    "NAME":"Jayanagar 9th Main",
+    "Ward_No":179,
+    "lon":77.5836330019,
+    "lat":12.9174333312,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000381",
+    "NAME":"Kalyani Magnum JP Nagar",
+    "Ward_No":187,
+    "lon":77.5949663277,
+    "lat":12.9013166644,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000380",
+    "NAME":"kalyani Magnum",
+    "Ward_No":187,
+    "lon":77.5960663269,
+    "lat":12.9001833311,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000379",
+    "NAME":"R.V.Dental College",
+    "Ward_No":179,
+    "lon":77.5856996672,
+    "lat":12.9110166679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000378",
+    "NAME":"Jayanagar South End circle",
+    "Ward_No":167,
+    "lon":77.580349671,
+    "lat":12.9364666646,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000377",
+    "NAME":"R.V. Teachers colony",
+    "Ward_No":143,
+    "lon":77.5799830048,
+    "lat":12.9444333312,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000376",
+    "NAME":"Taj Residency (Trinity Circle)",
+    "Ward_No":90,
+    "lon":77.6199663157,
+    "lat":12.9733999974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000375",
+    "NAME":"Philips (RMZ Ulsoor Lake)",
+    "Ward_No":79,
+    "lon":77.6239496432,
+    "lat":12.9819166674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000374",
+    "NAME":"Ulsoor",
+    "Ward_No":80,
+    "lon":77.6291329696,
+    "lat":12.9790999973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000373",
+    "NAME":"Indiranagar Bus Depot",
+    "Ward_No":79,
+    "lon":77.6347496358,
+    "lat":12.9825999973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000372",
+    "NAME":"N.G.E.F.",
+    "Ward_No":50,
+    "lon":77.6497996254,
+    "lat":12.9878333271,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000371",
+    "NAME":"B Narayanapura (ORR)",
+    "Ward_No":55,
+    "lon":77.6845579336,
+    "lat":12.9953638855,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000370",
+    "NAME":"Mahadevapura (Cauvery Complex)",
+    "Ward_No":55,
+    "lon":77.6906495958,
+    "lat":12.9973666666,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000369",
+    "NAME":"Singayana Palya",
+    "Ward_No":55,
+    "lon":77.6949162625,
+    "lat":12.9957333265,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000368",
+    "NAME":"ABB Centre",
+    "Ward_No":82,
+    "lon":77.7056662543,
+    "lat":12.9930499964,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000367",
+    "NAME":"Brigade Tech Park (ITPL)",
+    "Ward_No":83,
+    "lon":77.7405662267,
+    "lat":12.9875333259,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000366",
+    "NAME":"G.R.Tech",
+    "Ward_No":83,
+    "lon":77.7432495545,
+    "lat":12.9868666658,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000365",
+    "NAME":"BPL (ITPL)",
+    "Ward_No":83,
+    "lon":77.7484328802,
+    "lat":12.9850999958,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000364",
+    "NAME":"G.R.Tech (ITPL)",
+    "Ward_No":83,
+    "lon":77.7428828848,
+    "lat":12.9868333258,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000363",
+    "NAME":"Pattandura Agrahara",
+    "Ward_No":82,
+    "lon":77.7271995674,
+    "lat":12.9889333261,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000362",
+    "NAME":"Big Bazar (ITPL)",
+    "Ward_No":82,
+    "lon":77.7318495637,
+    "lat":12.987949996,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000361",
+    "NAME":"Rajpalya (Whitefield RD)",
+    "Ward_No":82,
+    "lon":77.7211829022,
+    "lat":12.9911166662,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000360",
+    "NAME":"Hoody",
+    "Ward_No":82,
+    "lon":77.716349576,
+    "lat":12.9921833262,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000359",
+    "NAME":"Garudachar Palya",
+    "Ward_No":82,
+    "lon":77.7019495872,
+    "lat":12.9937666664,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000356",
+    "NAME":"NGEF",
+    "Ward_No":57,
+    "lon":77.6506162948,
+    "lat":12.9879833271,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000355",
+    "NAME":"Isolation Hospital",
+    "Ward_No":80,
+    "lon":77.6432996299,
+    "lat":12.9849999972,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000353",
+    "NAME":"Indiranagar (Depot-6)",
+    "Ward_No":80,
+    "lon":77.6350663056,
+    "lat":12.9824999973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000351",
+    "NAME":"D'suoza Circle",
+    "Ward_No":111,
+    "lon":77.6097329825,
+    "lat":12.9668333276,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000350",
+    "NAME":"Manipal Hospital",
+    "Ward_No":88,
+    "lon":77.6507445742,
+    "lat":12.959720069,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000349",
+    "NAME":"Varthur",
+    "Ward_No":149,
+    "lon":77.7474134388,
+    "lat":12.9398749958,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000348",
+    "NAME":"KKR School",
+    "Ward_No":149,
+    "lon":77.7466995505,
+    "lat":12.9379666625,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000347",
+    "NAME":"Vinayaka Nagar",
+    "Ward_No":149,
+    "lon":77.744799552,
+    "lat":12.9363527736,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000346",
+    "NAME":"Gunjur",
+    "Ward_No":149,
+    "lon":77.7346634487,
+    "lat":12.9209777738,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000345",
+    "NAME":"Ramagondanahalli",
+    "Ward_No":84,
+    "lon":77.7390662238,
+    "lat":12.9570472181,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000344",
+    "NAME":"Tubarahalli",
+    "Ward_No":85,
+    "lon":77.7226467925,
+    "lat":12.955713885,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000342",
+    "NAME":"Rajeshwari (Old Airport RD)",
+    "Ward_No":113,
+    "lon":77.6625329457,
+    "lat":12.9590666669,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000341",
+    "NAME":"Shoollay Circle",
+    "Ward_No":111,
+    "lon":77.6090163229,
+    "lat":12.9664833276,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000339",
+    "NAME":"BEML Layout (ITPL)",
+    "Ward_No":85,
+    "lon":77.7165662451,
+    "lat":12.9609666662,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000338",
+    "NAME":"AECS  Layout",
+    "Ward_No":85,
+    "lon":77.7182495739,
+    "lat":12.9650833262,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000337",
+    "NAME":"CMRIT College (ITPL)",
+    "Ward_No":85,
+    "lon":77.7140162473,
+    "lat":12.9676333263,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000336",
+    "NAME":"Kundalahalli  colony",
+    "Ward_No":85,
+    "lon":77.7126245784,
+    "lat":12.9698194407,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000335",
+    "NAME":"SAP Labs India",
+    "Ward_No":82,
+    "lon":77.7148662468,
+    "lat":12.9777333262,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000334",
+    "NAME":"KTPO",
+    "Ward_No":82,
+    "lon":77.7211662386,
+    "lat":12.9770666628,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000333",
+    "NAME":"Vaidehi (Depot-18)",
+    "Ward_No":82,
+    "lon":77.7268995673,
+    "lat":12.9765833261,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000332",
+    "NAME":"Sathya Sai Hospital",
+    "Ward_No":82,
+    "lon":77.7289662359,
+    "lat":12.984216666,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000331",
+    "NAME":"BSNL Office (Whitefield RD)",
+    "Ward_No":83,
+    "lon":77.755332878,
+    "lat":12.9906166623,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000330",
+    "NAME":"Sri Sathya Sai Hospital",
+    "Ward_No":82,
+    "lon":77.7286662361,
+    "lat":12.9834499961,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000329",
+    "NAME":"SAP (ITPL)",
+    "Ward_No":82,
+    "lon":77.7149162435,
+    "lat":12.9775666629,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000328",
+    "NAME":"Manipal Center (Near M.G. RD)",
+    "Ward_No":111,
+    "lon":77.6139329798,
+    "lat":12.9754833275,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000326",
+    "NAME":"AladaMara (ORR)",
+    "Ward_No":73,
+    "lon":77.5096497143,
+    "lat":12.9754999986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000325",
+    "NAME":"Ambedkar College",
+    "Ward_No":73,
+    "lon":77.5046330469,
+    "lat":12.9604666686,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000324",
+    "NAME":"Thegumbe Cross",
+    "Ward_No":73,
+    "lon":77.5050163867,
+    "lat":12.9603499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000323",
+    "NAME":"Vinayaka Layout 12th Cross",
+    "Ward_No":73,
+    "lon":77.5149052666,
+    "lat":12.9600166652,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000322",
+    "NAME":"Vijayanagar",
+    "Ward_No":123,
+    "lon":77.5379330278,
+    "lat":12.9721499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000321",
+    "NAME":"Bhashyam Circle (Rajajinagar)",
+    "Ward_No":108,
+    "lon":77.5541330182,
+    "lat":12.9839999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000320",
+    "NAME":"Rajajinagar Bhashyam Circle",
+    "Ward_No":108,
+    "lon":77.5541163582,
+    "lat":12.9838166682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000319",
+    "NAME":"Rajajinagar 6th Block",
+    "Ward_No":106,
+    "lon":77.5534996885,
+    "lat":12.9789166682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000318",
+    "NAME":"Attiguppe",
+    "Ward_No":132,
+    "lon":77.5339496999,
+    "lat":12.9576833284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000317",
+    "NAME":"N.G.E.F Layout (Malathahalli R",
+    "Ward_No":73,
+    "lon":77.5103663837,
+    "lat":12.9611333286,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000316",
+    "NAME":"Papareddy Palya",
+    "Ward_No":129,
+    "lon":77.5076330454,
+    "lat":12.9718333286,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000315",
+    "NAME":"Temple (Mahalakshmi Layout)",
+    "Ward_No":68,
+    "lon":77.5440830247,
+    "lat":13.0084999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000314",
+    "NAME":"Navarang Bus Stand",
+    "Ward_No":99,
+    "lon":77.5513830201,
+    "lat":12.9962833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000313",
+    "NAME":"E.S.I. (Rajaji Nagar)",
+    "Ward_No":99,
+    "lon":77.552966359,
+    "lat":12.9901166682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000312",
+    "NAME":"Dr Rajkumar RD (Old Police Sta",
+    "Ward_No":99,
+    "lon":77.5556163574,
+    "lat":12.9898999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000311",
+    "NAME":"Ram Mandira",
+    "Ward_No":108,
+    "lon":77.556233017,
+    "lat":12.9862999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000310",
+    "NAME":"St.Joseph College",
+    "Ward_No":111,
+    "lon":77.6045746559,
+    "lat":12.9707472198,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000309",
+    "NAME":"Muneeshwara Temple",
+    "Ward_No":85,
+    "lon":77.7090162509,
+    "lat":12.9564666663,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000308",
+    "NAME":"Kundalahalli",
+    "Ward_No":85,
+    "lon":77.7183995738,
+    "lat":12.9652166662,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000307",
+    "NAME":"Rajajinagar Entrance",
+    "Ward_No":108,
+    "lon":77.5572163563,
+    "lat":12.9844166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000306",
+    "NAME":"Rajajinagar old police station",
+    "Ward_No":108,
+    "lon":77.5543996881,
+    "lat":12.9892499982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000305",
+    "NAME":"Basaveshwara College",
+    "Ward_No":99,
+    "lon":77.5526663593,
+    "lat":12.9938999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000304",
+    "NAME":"Navaranga",
+    "Ward_No":67,
+    "lon":77.5509996904,
+    "lat":12.9983166682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000303",
+    "NAME":"Mahalakshmi Layout Entrance",
+    "Ward_No":67,
+    "lon":77.548499692,
+    "lat":13.0076666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000302",
+    "NAME":"Mahalaxmi Temple",
+    "Ward_No":68,
+    "lon":77.545316364,
+    "lat":13.0082833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000301",
+    "NAME":"Mahalakshmi Layout Bus stop",
+    "Ward_No":68,
+    "lon":77.5439663648,
+    "lat":13.0119333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000299",
+    "NAME":"Dasarahalli Kere",
+    "Ward_No":106,
+    "lon":77.5451663637,
+    "lat":12.9849999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000298",
+    "NAME":"Okalipuram",
+    "Ward_No":95,
+    "lon":77.56741635,
+    "lat":12.982116668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000297",
+    "NAME":"Palandua Agrahar Gate",
+    "Ward_No":83,
+    "lon":77.7337495622,
+    "lat":12.987883326,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000296",
+    "NAME":"Wilson Garden",
+    "Ward_No":145,
+    "lon":77.5949496619,
+    "lat":12.9515999977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000295",
+    "NAME":"Bangalore Dairy Circle (Christ",
+    "Ward_No":146,
+    "lon":77.6066829839,
+    "lat":12.9364999976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000294",
+    "NAME":"Veerasandra",
+    "Ward_No":0,
+    "lon":77.6770829326,
+    "lat":12.8399499968,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000293",
+    "NAME":"Anekal Chandapura",
+    "Ward_No":0,
+    "lon":77.7041495812,
+    "lat":12.8027333265,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000292",
+    "NAME":"Anekal Chandapura Circle",
+    "Ward_No":0,
+    "lon":77.7027829123,
+    "lat":12.8013499965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000291",
+    "NAME":"Ramakrishnapura Gate",
+    "Ward_No":0,
+    "lon":77.7018495826,
+    "lat":12.7852333265,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000290",
+    "NAME":"Anekal Cross",
+    "Ward_No":0,
+    "lon":77.6911162591,
+    "lat":12.7053166667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000289",
+    "NAME":"Anekal",
+    "Ward_No":0,
+    "lon":77.6911329191,
+    "lat":12.7053166667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000288",
+    "NAME":"Vandanahalli",
+    "Ward_No":0,
+    "lon":77.7034495801,
+    "lat":12.7245999965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000287",
+    "NAME":"Bedaganahalli",
+    "Ward_No":0,
+    "lon":77.7038495803,
+    "lat":12.7514666665,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000286",
+    "NAME":"Naganayakanahalli",
+    "Ward_No":0,
+    "lon":77.7007329131,
+    "lat":12.7685333265,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000283",
+    "NAME":"Ram Mandira",
+    "Ward_No":108,
+    "lon":77.5572830163,
+    "lat":12.9841833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000282",
+    "NAME":"Bhashyam Circle",
+    "Ward_No":107,
+    "lon":77.554016355,
+    "lat":12.9845499982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000281",
+    "NAME":"Havanur Circle",
+    "Ward_No":100,
+    "lon":77.5377163682,
+    "lat":12.9880166683,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000280",
+    "NAME":"Basaveshwara Nagar",
+    "Ward_No":101,
+    "lon":77.5340163704,
+    "lat":12.9884833284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000279",
+    "NAME":"Poornima Talkies (Lalbhagh RD)",
+    "Ward_No":118,
+    "lon":77.5879496666,
+    "lat":12.9606833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000278",
+    "NAME":"R.V Teachers Colony",
+    "Ward_No":143,
+    "lon":77.5810830007,
+    "lat":12.9437333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000277",
+    "NAME":"Jayanagar 1St Block",
+    "Ward_No":167,
+    "lon":77.5840829987,
+    "lat":12.9364166679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000276",
+    "NAME":"Jayanagar 4th Block",
+    "Ward_No":169,
+    "lon":77.5916163336,
+    "lat":12.9271333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000275",
+    "NAME":"Jayadeva (Nival Tech)",
+    "Ward_No":170,
+    "lon":77.6031163259,
+    "lat":12.9167333277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000274",
+    "NAME":"Central Silk Board (ORR)",
+    "Ward_No":173,
+    "lon":77.6235163122,
+    "lat":12.9175833274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000273",
+    "NAME":"Wipro",
+    "Ward_No":0,
+    "lon":77.6594996154,
+    "lat":12.839283327,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000272",
+    "NAME":"Jayanagara (Kempe Gowda School",
+    "Ward_No":170,
+    "lon":77.59701633,
+    "lat":12.9215833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000271",
+    "NAME":"Jayanagar Pump House",
+    "Ward_No":170,
+    "lon":77.59691633,
+    "lat":12.9173333277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000270",
+    "NAME":"Jayanagara 4th T Block",
+    "Ward_No":168,
+    "lon":77.587949666,
+    "lat":12.9262999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000269",
+    "NAME":"Church Bus Stop",
+    "Ward_No":168,
+    "lon":77.5835663388,
+    "lat":12.9272166679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000268",
+    "NAME":"Jayanagar 4th Block (Bus Stati",
+    "Ward_No":168,
+    "lon":77.5835946688,
+    "lat":12.9276649979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000267",
+    "NAME":"Jayanagar 3rd Block",
+    "Ward_No":169,
+    "lon":77.5839329987,
+    "lat":12.9315666679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000266",
+    "NAME":"Jayanagara Madavan Park",
+    "Ward_No":153,
+    "lon":77.5851663381,
+    "lat":12.9422166678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000265",
+    "NAME":"Ashoka Pillar",
+    "Ward_No":143,
+    "lon":77.5800330014,
+    "lat":12.9445999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000264",
+    "NAME":"Guddada Halli",
+    "Ward_No":0,
+    "lon":77.7368995549,
+    "lat":12.788183326,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000263",
+    "NAME":"Attibele",
+    "Ward_No":0,
+    "lon":77.771299526,
+    "lat":12.7782999955,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000262",
+    "NAME":"Yedwanahalli",
+    "Ward_No":0,
+    "lon":77.751316213,
+    "lat":12.7851666658,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000261",
+    "NAME":"Guest Line",
+    "Ward_No":0,
+    "lon":77.7419995507,
+    "lat":12.786549996,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000260",
+    "NAME":"Neraluru (Attibele RD)",
+    "Ward_No":0,
+    "lon":77.7296328909,
+    "lat":12.7917499961,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000259",
+    "NAME":"Tirumgondanahalli",
+    "Ward_No":0,
+    "lon":77.7218495671,
+    "lat":12.7937999962,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000258",
+    "NAME":"Hale Chandapura",
+    "Ward_No":0,
+    "lon":77.7123662448,
+    "lat":12.8011833264,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000256",
+    "NAME":"Hennagara cross",
+    "Ward_No":0,
+    "lon":77.6992495851,
+    "lat":12.8063499965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000255",
+    "NAME":"Indian Express Stop",
+    "Ward_No":110,
+    "lon":77.5974163309,
+    "lat":12.9839833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000254",
+    "NAME":"Forum Mall (Hosur RD)",
+    "Ward_No":146,
+    "lon":77.6123329834,
+    "lat":12.9341166642,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000253",
+    "NAME":"Johnson Market",
+    "Ward_No":117,
+    "lon":77.6068496543,
+    "lat":12.9653833276,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000252",
+    "NAME":"ST Marks RD",
+    "Ward_No":111,
+    "lon":77.601482988,
+    "lat":12.9738166677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000251",
+    "NAME":"M G Road",
+    "Ward_No":90,
+    "lon":77.6141329797,
+    "lat":12.9744166675,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000250",
+    "NAME":"AMC College",
+    "Ward_No":0,
+    "lon":77.58765522,
+    "lat":12.8289638868,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000249",
+    "NAME":"Venkatadri Cross",
+    "Ward_No":187,
+    "lon":77.5946663311,
+    "lat":12.8985333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000248",
+    "NAME":"K.R.Circle",
+    "Ward_No":110,
+    "lon":77.5869663375,
+    "lat":12.9753333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000247",
+    "NAME":"K H Road",
+    "Ward_No":117,
+    "lon":77.5929996633,
+    "lat":12.9579999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000246",
+    "NAME":"HSBC Bank",
+    "Ward_No":187,
+    "lon":77.5988496583,
+    "lat":12.8924833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000245",
+    "NAME":"Begihalli",
+    "Ward_No":0,
+    "lon":77.6023496541,
+    "lat":12.7920666677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000244",
+    "NAME":"Hara Gadde",
+    "Ward_No":0,
+    "lon":77.6523662889,
+    "lat":12.7577833272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000243",
+    "NAME":"Madapatna",
+    "Ward_No":0,
+    "lon":77.6422662964,
+    "lat":12.7700666673,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000242",
+    "NAME":"Jigani",
+    "Ward_No":0,
+    "lon":77.6356996313,
+    "lat":12.7852833273,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000239",
+    "NAME":"Himagiri (Bannerghatta RD)",
+    "Ward_No":194,
+    "lon":77.5904829932,
+    "lat":12.8620833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000236",
+    "NAME":"Jayadeva Jn. (Hospital)",
+    "Ward_No":170,
+    "lon":77.600049658,
+    "lat":12.9187833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000234",
+    "NAME":"Kengeri Housing Board Qrts",
+    "Ward_No":130,
+    "lon":77.4880830591,
+    "lat":12.9331333321,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000233",
+    "NAME":"Kengeri Upanagar",
+    "Ward_No":159,
+    "lon":77.4848997274,
+    "lat":12.9241166655,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000230",
+    "NAME":"BGS Health City",
+    "Ward_No":198,
+    "lon":77.4979830531,
+    "lat":12.9025666654,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000229",
+    "NAME":"Omkar Ashrama",
+    "Ward_No":198,
+    "lon":77.5046163828,
+    "lat":12.9047166653,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000228",
+    "NAME":"Channasandra",
+    "Ward_No":160,
+    "lon":77.520399707,
+    "lat":12.9025833319,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000225",
+    "NAME":"Arehalli",
+    "Ward_No":184,
+    "lon":77.5377163635,
+    "lat":12.9083499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000224",
+    "NAME":"Uttarahalli Circle",
+    "Ward_No":184,
+    "lon":77.5426996939,
+    "lat":12.905766665,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000223",
+    "NAME":"K.R. Hospital (Uttarahalli)",
+    "Ward_No":184,
+    "lon":77.5457830253,
+    "lat":12.9067666649,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000222",
+    "NAME":"Uttarahalli Bank Colony",
+    "Ward_No":184,
+    "lon":77.5484996904,
+    "lat":12.9083999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000220",
+    "NAME":"Electronic City 2nd Phase",
+    "Ward_No":0,
+    "lon":77.6708996073,
+    "lat":12.8478138858,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000219",
+    "NAME":"Electronic City 1st Phase",
+    "Ward_No":0,
+    "lon":77.6655829413,
+    "lat":12.854166667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000217",
+    "NAME":"Purnaprjna Water Tank",
+    "Ward_No":184,
+    "lon":77.5345496988,
+    "lat":12.9083833317,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000216",
+    "NAME":"Padavalamma Temple",
+    "Ward_No":184,
+    "lon":77.5287330355,
+    "lat":12.9049833318,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000215",
+    "NAME":"Gurukul School (Uttarahalli Ro",
+    "Ward_No":184,
+    "lon":77.5270663698,
+    "lat":12.9044666651,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000213",
+    "NAME":"BGS Main Gate",
+    "Ward_No":198,
+    "lon":77.4989747193,
+    "lat":12.9070138876,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000212",
+    "NAME":"Savan Darshan Ashrama",
+    "Ward_No":198,
+    "lon":77.4927497228,
+    "lat":12.9096499988,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000211",
+    "NAME":"VES School Cross (Uttarahalli",
+    "Ward_No":198,
+    "lon":77.4889997249,
+    "lat":12.9076166655,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000210",
+    "NAME":"Uttara Halli Cross",
+    "Ward_No":159,
+    "lon":77.4848497272,
+    "lat":12.9119833322,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000209",
+    "NAME":"Kengeri Post Office",
+    "Ward_No":159,
+    "lon":77.4813663992,
+    "lat":12.9141833289,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000208",
+    "NAME":"Yelahanka New Bus stand",
+    "Ward_No":3,
+    "lon":77.5756663437,
+    "lat":13.1071833312,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000207",
+    "NAME":"Yelahanka 4th Phase Bus Stand",
+    "Ward_No":3,
+    "lon":77.5728330121,
+    "lat":13.1062166646,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000206",
+    "NAME":"Shivananda circle",
+    "Ward_No":94,
+    "lon":77.5748996754,
+    "lat":12.9858166679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000205",
+    "NAME":"Shivananda stop",
+    "Ward_No":94,
+    "lon":77.5747441199,
+    "lat":12.9859333313,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000204",
+    "NAME":"Hebbala kempapura",
+    "Ward_No":7,
+    "lon":77.5920663322,
+    "lat":13.0479999977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000203",
+    "NAME":"Yelahanka 5th phase",
+    "Ward_No":3,
+    "lon":77.5766496764,
+    "lat":13.1068166645,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000201",
+    "NAME":"I.A.F/Mekheri Circle",
+    "Ward_No":34,
+    "lon":77.5840330002,
+    "lat":13.0187999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000200",
+    "NAME":"Palace Grounds/Mekhri circle",
+    "Ward_No":34,
+    "lon":77.5839663402,
+    "lat":13.0175833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000199",
+    "NAME":"Majestic (KBS)",
+    "Ward_No":94,
+    "lon":77.572099677,
+    "lat":12.978333328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000196",
+    "NAME":"Military Accounts Office",
+    "Ward_No":114,
+    "lon":77.620766315,
+    "lat":12.9669166674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000195",
+    "NAME":"Mayo Hall (Victoria RD)",
+    "Ward_No":111,
+    "lon":77.6124829806,
+    "lat":12.9666999975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000194",
+    "NAME":"Mallya Hospital",
+    "Ward_No":110,
+    "lon":77.5943163293,
+    "lat":12.9702666644,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000193",
+    "NAME":"Mysore Bank Circle",
+    "Ward_No":109,
+    "lon":77.5823330004,
+    "lat":12.9721999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000192",
+    "NAME":"R.M. Guttahalli",
+    "Ward_No":93,
+    "lon":77.5841163397,
+    "lat":12.9986999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000191",
+    "NAME":"Mekhri (Palace ground)",
+    "Ward_No":35,
+    "lon":77.5837996702,
+    "lat":13.0106166678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000190",
+    "NAME":"Gangenahalli",
+    "Ward_No":35,
+    "lon":77.58434967,
+    "lat":13.0223166678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000189",
+    "NAME":"C.B.I (Bellary RD)",
+    "Ward_No":21,
+    "lon":77.5863996688,
+    "lat":13.0290833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000187",
+    "NAME":"Basavapura",
+    "Ward_No":192,
+    "lon":77.5882663344,
+    "lat":12.8467333279,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000186",
+    "NAME":"Nice Road",
+    "Ward_No":192,
+    "lon":77.5881996644,
+    "lat":12.8462333312,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000185",
+    "NAME":"Himagiri",
+    "Ward_No":194,
+    "lon":77.5904829965,
+    "lat":12.8620833312,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000184",
+    "NAME":"Venkatadri Cross (Bilekahalli)",
+    "Ward_No":187,
+    "lon":77.5946663278,
+    "lat":12.8985333311,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000180",
+    "NAME":"Bilekallahalli",
+    "Ward_No":188,
+    "lon":77.6011329903,
+    "lat":12.9008666644,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000178",
+    "NAME":"Honey Well (Bannerghatta Road)",
+    "Ward_No":193,
+    "lon":77.5969163295,
+    "lat":12.8872166677,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000177",
+    "NAME":"Hulimavu",
+    "Ward_No":193,
+    "lon":77.59593299,
+    "lat":12.8814833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000176",
+    "NAME":"Meenakshi Temple",
+    "Ward_No":193,
+    "lon":77.5945663308,
+    "lat":12.8741999978,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000175",
+    "NAME":"Kadena Agrahara",
+    "Ward_No":192,
+    "lon":77.5917663324,
+    "lat":12.8658833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000174",
+    "NAME":"Gottigere Stop",
+    "Ward_No":194,
+    "lon":77.5888663341,
+    "lat":12.8560333278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000173",
+    "NAME":"Kalkere",
+    "Ward_No":0,
+    "lon":77.5889829937,
+    "lat":12.8326166679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000172",
+    "NAME":"Bannerghatta National Park",
+    "Ward_No":0,
+    "lon":77.5767996709,
+    "lat":12.801333328,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000171",
+    "NAME":"Madiwala Check Post (Big Bazar",
+    "Ward_No":146,
+    "lon":77.610932981,
+    "lat":12.9338999976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000170",
+    "NAME":"Kormangala Water Tank (VIT)",
+    "Ward_No":151,
+    "lon":77.621732977,
+    "lat":12.9292499974,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000168",
+    "NAME":"Marathahalli P/O (Varthur Rd)",
+    "Ward_No":86,
+    "lon":77.6887162663,
+    "lat":12.9551833266,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000166",
+    "NAME":"HAL Kalyan Mantap",
+    "Ward_No":87,
+    "lon":77.679816273,
+    "lat":12.9544999967,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000164",
+    "NAME":"Murigesh Palya",
+    "Ward_No":113,
+    "lon":77.6562329502,
+    "lat":12.959199997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000163",
+    "NAME":"Manipal Hospital (Opp Leela pa",
+    "Ward_No":113,
+    "lon":77.6506996242,
+    "lat":12.9594333271,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000161",
+    "NAME":"Kormangala BDA Complex",
+    "Ward_No":151,
+    "lon":77.6224663099,
+    "lat":12.9312833308,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000160",
+    "NAME":"Kempapura (ORR)",
+    "Ward_No":7,
+    "lon":77.6011163296,
+    "lat":13.0437166676,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000159",
+    "NAME":"Veeranapalya",
+    "Ward_No":6,
+    "lon":77.6136163213,
+    "lat":13.0421999975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000158",
+    "NAME":"Kalyannagar",
+    "Ward_No":25,
+    "lon":77.6380829643,
+    "lat":13.0262833272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000157",
+    "NAME":"Babusab Palya Jn.(80 Feet Road",
+    "Ward_No":25,
+    "lon":77.6476829609,
+    "lat":13.0225999971,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000156",
+    "NAME":"Doddanekkundi",
+    "Ward_No":85,
+    "lon":77.6948495922,
+    "lat":12.9794499965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000155",
+    "NAME":"Marathahalli Multiplex Bridge",
+    "Ward_No":150,
+    "lon":77.699682918,
+    "lat":12.9515999965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000154",
+    "NAME":"ECO Space (RMZ)",
+    "Ward_No":150,
+    "lon":77.6817996009,
+    "lat":12.9285999967,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000153",
+    "NAME":"Bellandur Gate (ORR)",
+    "Ward_No":150,
+    "lon":77.676199605,
+    "lat":12.9259666668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000152",
+    "NAME":"Jayadeva (ORR)",
+    "Ward_No":177,
+    "lon":77.5996829882,
+    "lat":12.9165833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000151",
+    "NAME":"Central Silk  Board (ORR)",
+    "Ward_No":173,
+    "lon":77.6240513119,
+    "lat":12.9176483274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000150",
+    "NAME":"Sarjapur Cross",
+    "Ward_No":150,
+    "lon":77.6661829423,
+    "lat":12.9211166669,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000149",
+    "NAME":"AKME Apartments (ORR)",
+    "Ward_No":150,
+    "lon":77.6699996095,
+    "lat":12.9228333269,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000148",
+    "NAME":"Veeranapalya (ORR)",
+    "Ward_No":6,
+    "lon":77.61391354,
+    "lat":13.0418888864,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000147",
+    "NAME":"HSR Layout",
+    "Ward_No":174,
+    "lon":77.6376829624,
+    "lat":12.9158833273,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000146",
+    "NAME":"Hebbala Dairy Gate",
+    "Ward_No":7,
+    "lon":77.5920663355,
+    "lat":13.0479999977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000145",
+    "NAME":"G.K.V.K (Bellary RD)",
+    "Ward_No":7,
+    "lon":77.5927329989,
+    "lat":13.074183331,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000144",
+    "NAME":"Jakkur Aerodrome",
+    "Ward_No":7,
+    "lon":77.5926163357,
+    "lat":13.0747833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000143",
+    "NAME":"Govt. School (New Town)",
+    "Ward_No":3,
+    "lon":77.5767830095,
+    "lat":13.0998499979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000142",
+    "NAME":"Nagavara",
+    "Ward_No":24,
+    "lon":77.624399644,
+    "lat":13.0401166674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000141",
+    "NAME":"Hennuru (ORR)",
+    "Ward_No":25,
+    "lon":77.6330329679,
+    "lat":13.0277166673,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000140",
+    "NAME":"Mahadevpura",
+    "Ward_No":55,
+    "lon":77.6873662648,
+    "lat":12.9913333299,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000139",
+    "NAME":"Kartik Nagar",
+    "Ward_No":85,
+    "lon":77.7015662569,
+    "lat":12.9683499964,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000138",
+    "NAME":"Kartika Nagar",
+    "Ward_No":85,
+    "lon":77.7015662536,
+    "lat":12.9683499964,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000137",
+    "NAME":"Mahadevpura (ORR)",
+    "Ward_No":81,
+    "lon":77.6873662681,
+    "lat":12.9911499966,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000135",
+    "NAME":"Rammurthynagar/Channasandra",
+    "Ward_No":50,
+    "lon":77.6622829469,
+    "lat":13.0111833269,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000134",
+    "NAME":"Banaswadi",
+    "Ward_No":25,
+    "lon":77.6554662887,
+    "lat":13.019299997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000133",
+    "NAME":"Babusab Palya",
+    "Ward_No":25,
+    "lon":77.6475996276,
+    "lat":13.0225166638,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000132",
+    "NAME":"Hennuru Jn. (ORR)",
+    "Ward_No":29,
+    "lon":77.6332329677,
+    "lat":13.0273999973,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000131",
+    "NAME":"Nagawara Jn.",
+    "Ward_No":6,
+    "lon":77.6237829744,
+    "lat":13.0406833274,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000130",
+    "NAME":"IBM Manyatha Tech Park",
+    "Ward_No":6,
+    "lon":77.6200996469,
+    "lat":13.0411333308,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000129",
+    "NAME":"Hebbala (ORR)",
+    "Ward_No":7,
+    "lon":77.591191336,
+    "lat":13.0428833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000128",
+    "NAME":"Vijayanagar Bus Station",
+    "Ward_No":124,
+    "lon":77.5378996978,
+    "lat":12.9719499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000127",
+    "NAME":"Depot 5 (Vijayanagar)",
+    "Ward_No":133,
+    "lon":77.5345496997,
+    "lat":12.9638166684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000126",
+    "NAME":"Deepanjali Nagar (Depot -16)",
+    "Ward_No":133,
+    "lon":77.5371663679,
+    "lat":12.9518833283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000125",
+    "NAME":"Veerabhadra Nagar",
+    "Ward_No":158,
+    "lon":77.5337663697,
+    "lat":12.9378666684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000124",
+    "NAME":"Dwaraka Nagar",
+    "Ward_No":158,
+    "lon":77.5385496968,
+    "lat":12.9341499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000123",
+    "NAME":"Deepanjali Nagara (DEPOT-16)",
+    "Ward_No":158,
+    "lon":77.5372163679,
+    "lat":12.9512166683,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000121",
+    "NAME":"Adi Chunchanagiri Matta",
+    "Ward_No":123,
+    "lon":77.545933023,
+    "lat":12.9738666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000120",
+    "NAME":"Mysore Road Tolgate",
+    "Ward_No":141,
+    "lon":77.5541163545,
+    "lat":12.9579666648,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000119",
+    "NAME":"Shivanahalli",
+    "Ward_No":99,
+    "lon":77.5509330203,
+    "lat":12.9907999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000118",
+    "NAME":"West Of Choard Road(Navarang)",
+    "Ward_No":67,
+    "lon":77.5498330211,
+    "lat":12.9997833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000117",
+    "NAME":"Chowdeshwarinagar Bus Station",
+    "Ward_No":17,
+    "lon":77.5538996892,
+    "lat":13.0328666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000116",
+    "NAME":"Mattikere",
+    "Ward_No":36,
+    "lon":77.5576830169,
+    "lat":13.0341999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000115",
+    "NAME":"Toll Gate (Yeshwanthpura)",
+    "Ward_No":35,
+    "lon":77.5608663547,
+    "lat":13.0176166681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000114",
+    "NAME":"Yeshwantpura Bus Stand",
+    "Ward_No":45,
+    "lon":77.5574663568,
+    "lat":13.0181999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000113",
+    "NAME":"Govt Soap Factory",
+    "Ward_No":66,
+    "lon":77.5543996885,
+    "lat":13.0130666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000112",
+    "NAME":"Mahalakshmi Layout",
+    "Ward_No":68,
+    "lon":77.5441496947,
+    "lat":13.0116833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000111",
+    "NAME":"Modi Circle",
+    "Ward_No":67,
+    "lon":77.549916361,
+    "lat":12.9996166682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000110",
+    "NAME":"Basava Mantap Stop",
+    "Ward_No":99,
+    "lon":77.5508163604,
+    "lat":12.9955333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000109",
+    "NAME":"Rajajinagar Power Station",
+    "Ward_No":107,
+    "lon":77.5505830205,
+    "lat":12.9895499982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000108",
+    "NAME":"Industrial Town",
+    "Ward_No":107,
+    "lon":77.5490663613,
+    "lat":12.9849499982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000107",
+    "NAME":"Magadi Road Tolgate",
+    "Ward_No":106,
+    "lon":77.5491163612,
+    "lat":12.9819999982,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000106",
+    "NAME":"Kaderenahalli Cross",
+    "Ward_No":180,
+    "lon":77.5672663489,
+    "lat":12.913616668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000105",
+    "NAME":"Sarjapur Jn (ORR)",
+    "Ward_No":150,
+    "lon":77.6655329461,
+    "lat":12.9210833303,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000104",
+    "NAME":"S.J.R.I Park",
+    "Ward_No":82,
+    "lon":77.7277384557,
+    "lat":12.9813277738,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000103",
+    "NAME":"BTM MICO Layout",
+    "Ward_No":176,
+    "lon":77.604449655,
+    "lat":12.9165999976,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000102",
+    "NAME":"Indira Nursing Home",
+    "Ward_No":165,
+    "lon":77.5645830142,
+    "lat":12.9291333314,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000101",
+    "NAME":"Manuvana",
+    "Ward_No":123,
+    "lon":77.5447330237,
+    "lat":12.9739833283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000100",
+    "NAME":"Dhobi ghat",
+    "Ward_No":107,
+    "lon":77.5509830202,
+    "lat":12.9871666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00099",
+    "NAME":"Manjunath Nagar/Modhi Hospital",
+    "Ward_No":99,
+    "lon":77.5509496903,
+    "lat":12.9947166682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00098",
+    "NAME":"Rajajinagar 1st Block",
+    "Ward_No":67,
+    "lon":77.550033021,
+    "lat":13.0034833282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00097",
+    "NAME":"Mahalakshmi Layout Cross",
+    "Ward_No":67,
+    "lon":77.5488163619,
+    "lat":13.0083666682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00096",
+    "NAME":"Iskcon Temple",
+    "Ward_No":44,
+    "lon":77.5514496903,
+    "lat":13.0117166682,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00094",
+    "NAME":"Yeshwantapura Toll Gate",
+    "Ward_No":35,
+    "lon":77.5608996846,
+    "lat":13.0175833281,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00093",
+    "NAME":"Deewanar Palya",
+    "Ward_No":35,
+    "lon":77.5617996842,
+    "lat":13.0268666681,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00092",
+    "NAME":"M S Ramaiah college",
+    "Ward_No":35,
+    "lon":77.5617996843,
+    "lat":13.0284499981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00091",
+    "NAME":"Kengunta Circle",
+    "Ward_No":73,
+    "lon":77.5050163834,
+    "lat":12.9603499986,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00090",
+    "NAME":"Chandra Layout",
+    "Ward_No":132,
+    "lon":77.5262830344,
+    "lat":12.9582999984,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00089",
+    "NAME":"R.V. Dental College",
+    "Ward_No":177,
+    "lon":77.5857663338,
+    "lat":12.9109999979,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00088",
+    "NAME":"Rajarajeswari Police station",
+    "Ward_No":160,
+    "lon":77.5208497069,
+    "lat":12.9128833318,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00085",
+    "NAME":"Jn of Sarjapura Road",
+    "Ward_No":150,
+    "lon":77.6655329427,
+    "lat":12.9210833269,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00084",
+    "NAME":"Palandur Agrahara Cross",
+    "Ward_No":82,
+    "lon":77.7319495636,
+    "lat":12.987983326,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00083",
+    "NAME":"Rajarajeswari Jn.",
+    "Ward_No":160,
+    "lon":77.5183663754,
+    "lat":12.9359499985,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00082",
+    "NAME":"Rajarajeswari Temple",
+    "Ward_No":160,
+    "lon":77.5111497127,
+    "lat":12.9278166653,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00081",
+    "NAME":"Ideal Home Circle",
+    "Ward_No":160,
+    "lon":77.5181997086,
+    "lat":12.9244666652,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00080",
+    "NAME":"BEML 3rd Stage",
+    "Ward_No":160,
+    "lon":77.5185163751,
+    "lat":12.9227499985,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00077",
+    "NAME":"BEML 5th stage Bus stand",
+    "Ward_No":160,
+    "lon":77.5212830399,
+    "lat":12.9067999985,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00076",
+    "NAME":"Post Office (Kengeri)",
+    "Ward_No":159,
+    "lon":77.4813663958,
+    "lat":12.9141833322,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00075",
+    "NAME":"R.V. College",
+    "Ward_No":159,
+    "lon":77.4992830494,
+    "lat":12.9252499987,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00072",
+    "NAME":"Hope Farm",
+    "Ward_No":83,
+    "lon":77.7525495468,
+    "lat":12.9839166657,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00071",
+    "NAME":"Kadugodi Bus Station",
+    "Ward_No":83,
+    "lon":77.7584328722,
+    "lat":12.9956833256,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00067",
+    "NAME":"Jayaram Dass( Kenhan Halli)",
+    "Ward_No":129,
+    "lon":77.5061830456,
+    "lat":12.9310833286,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00066",
+    "NAME":"R.V.Teachers Colony",
+    "Ward_No":159,
+    "lon":77.4992830527,
+    "lat":12.9252499987,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00064",
+    "NAME":"Ganesha Temple (Mysore RD)",
+    "Ward_No":159,
+    "lon":77.4803163997,
+    "lat":12.9113666689,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00063",
+    "NAME":"Railway Station (KST)",
+    "Ward_No":159,
+    "lon":77.4822497287,
+    "lat":12.9165333322,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00062",
+    "NAME":"Gurappanapalya",
+    "Ward_No":170,
+    "lon":77.600016328,
+    "lat":12.9194499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00061",
+    "NAME":"Jakkasandra",
+    "Ward_No":151,
+    "lon":77.6394829613,
+    "lat":12.9240833272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00060",
+    "NAME":"Marathahalli Jn",
+    "Ward_No":86,
+    "lon":77.7000162578,
+    "lat":12.9570166665,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00059",
+    "NAME":"Jn. Of Sarjapura Rd",
+    "Ward_No":0,
+    "lon":77.7833828477,
+    "lat":12.8609499953,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00058",
+    "NAME":"Marathahalli (Mulitplex ORR)",
+    "Ward_No":150,
+    "lon":77.7002329176,
+    "lat":12.9539499965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00057",
+    "NAME":"Kumarswamy Layout",
+    "Ward_No":181,
+    "lon":77.5618996821,
+    "lat":12.9033999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00056",
+    "NAME":"ISRO Layout",
+    "Ward_No":181,
+    "lon":77.5579830144,
+    "lat":12.8988333282,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00055",
+    "NAME":"HSR (Depot-25)",
+    "Ward_No":174,
+    "lon":77.6428829589,
+    "lat":12.9198166672,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00054",
+    "NAME":"ITPL",
+    "Ward_No":83,
+    "lon":77.7371495594,
+    "lat":12.9874833259,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00053",
+    "NAME":"ITPL Back Gate",
+    "Ward_No":82,
+    "lon":77.7317995637,
+    "lat":12.986333326,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00052",
+    "NAME":"I Gate (Perot Systems)",
+    "Ward_No":82,
+    "lon":77.7180495743,
+    "lat":12.9772833295,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00051",
+    "NAME":"Graphite India Limited",
+    "Ward_No":85,
+    "lon":77.7100162506,
+    "lat":12.9772166663,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00050",
+    "NAME":"Marathahalli Bridge",
+    "Ward_No":150,
+    "lon":77.7016662532,
+    "lat":12.9567666631,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00049",
+    "NAME":"J.P.Morgan",
+    "Ward_No":150,
+    "lon":77.6968995899,
+    "lat":12.9424499965,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00048",
+    "NAME":"Kadabisanahalli",
+    "Ward_No":150,
+    "lon":77.6954162609,
+    "lat":12.9395333265,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00047",
+    "NAME":"New Horizion College (ORR)",
+    "Ward_No":150,
+    "lon":77.6918329236,
+    "lat":12.9359666666,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00046",
+    "NAME":"Devarabisanahalli",
+    "Ward_No":150,
+    "lon":77.6847329288,
+    "lat":12.9297666667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00045",
+    "NAME":"H.S.R. Layout (Depot-25)",
+    "Ward_No":174,
+    "lon":77.6430829587,
+    "lat":12.9197333272,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00044",
+    "NAME":"HSR 14th Main",
+    "Ward_No":174,
+    "lon":77.6376663025,
+    "lat":12.9159166673,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00043",
+    "NAME":"HSR SI Apartment",
+    "Ward_No":174,
+    "lon":77.6291496384,
+    "lat":12.9166666674,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00040",
+    "NAME":"Kormangala 100 Feet Road",
+    "Ward_No":148,
+    "lon":77.6276996398,
+    "lat":12.9378333307,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00039",
+    "NAME":"Narayana Hrudayalaya",
+    "Ward_No":0,
+    "lon":77.6963162574,
+    "lat":12.8096333266,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00038",
+    "NAME":"Bommasandra",
+    "Ward_No":0,
+    "lon":77.6908162617,
+    "lat":12.8163833267,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00037",
+    "NAME":"Hebbagodi",
+    "Ward_No":0,
+    "lon":77.6829662679,
+    "lat":12.8256166667,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00036",
+    "NAME":"Huskur Gate",
+    "Ward_No":0,
+    "lon":77.6793496008,
+    "lat":12.8354333268,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00035",
+    "NAME":"Nayandhalli Cross",
+    "Ward_No":158,
+    "lon":77.5285330329,
+    "lat":12.9450666684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00034",
+    "NAME":"Garaje (DEPOT-5)",
+    "Ward_No":126,
+    "lon":77.5347830295,
+    "lat":12.9646999984,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00033",
+    "NAME":"Maruthi Mandir",
+    "Ward_No":125,
+    "lon":77.5360663688,
+    "lat":12.9676333283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00032",
+    "NAME":"N.G.E.F Layout",
+    "Ward_No":73,
+    "lon":77.5093663809,
+    "lat":12.9609666653,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00031",
+    "NAME":"R P C Layout",
+    "Ward_No":133,
+    "lon":77.5339330299,
+    "lat":12.9579833284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00030",
+    "NAME":"Nayandahalli Jn",
+    "Ward_No":158,
+    "lon":77.5291663725,
+    "lat":12.9450333284,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00029",
+    "NAME":"Hoskere Halli Cross",
+    "Ward_No":162,
+    "lon":77.5394496963,
+    "lat":12.9335999983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00028",
+    "NAME":"Hoskere Halli",
+    "Ward_No":162,
+    "lon":77.5433996938,
+    "lat":12.9305999983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00027",
+    "NAME":"Janata Bazar (Kathariguppe)",
+    "Ward_No":161,
+    "lon":77.5460163622,
+    "lat":12.9281833283,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00026",
+    "NAME":"Hoskerehalli Cross (ORR)",
+    "Ward_No":161,
+    "lon":77.5441996933,
+    "lat":12.9297166683,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00025",
+    "NAME":"Hoskerehalli Petrol Bunk",
+    "Ward_No":161,
+    "lon":77.5400830259,
+    "lat":12.9330499983,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00024",
+    "NAME":"PES college (ORR)",
+    "Ward_No":161,
+    "lon":77.536616368,
+    "lat":12.9351166684,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00022",
+    "NAME":"BHEL Gate (Mysore Road)",
+    "Ward_No":158,
+    "lon":77.5367830314,
+    "lat":12.949716665,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00021",
+    "NAME":"Income Tax Layout",
+    "Ward_No":132,
+    "lon":77.5320163711,
+    "lat":12.9599999984,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00020",
+    "NAME":"Nagarabhavi Circle",
+    "Ward_No":128,
+    "lon":77.5189163787,
+    "lat":12.9585166685,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00019",
+    "NAME":"Nagarabhavi BDA Complex",
+    "Ward_No":73,
+    "lon":77.5119163831,
+    "lat":12.9794666686,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00018",
+    "NAME":"Mono Type (Banashankari)",
+    "Ward_No":166,
+    "lon":77.570566347,
+    "lat":12.921766668,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00017",
+    "NAME":"Marenahalli",
+    "Ward_No":177,
+    "lon":77.5889829952,
+    "lat":12.9168833278,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00016",
+    "NAME":"Jayanagar  9th BL East",
+    "Ward_No":170,
+    "lon":77.5968163267,
+    "lat":12.9168499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00015",
+    "NAME":"BTM 16th Main",
+    "Ward_No":176,
+    "lon":77.6086663189,
+    "lat":12.9164666643,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00014",
+    "NAME":"BTM Layout",
+    "Ward_No":176,
+    "lon":77.6162663138,
+    "lat":12.9161999975,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00012",
+    "NAME":"Infosys Main Gate",
+    "Ward_No":0,
+    "lon":77.6650662815,
+    "lat":12.845449997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00011",
+    "NAME":"PES College (Hosur)",
+    "Ward_No":0,
+    "lon":77.6624662837,
+    "lat":12.858199997,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst00010",
+    "NAME":"Hosa Road Jn.",
+    "Ward_No":192,
+    "lon":77.6536996202,
+    "lat":12.8691666671,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0009",
+    "NAME":"BTM Water Tank",
+    "Ward_No":176,
+    "lon":77.6071913199,
+    "lat":12.916583331,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0008",
+    "NAME":"MICO Layout",
+    "Ward_No":170,
+    "lon":77.6041329852,
+    "lat":12.9166833277,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0006",
+    "NAME":"Jayanagar 9th block East",
+    "Ward_No":170,
+    "lon":77.5968163301,
+    "lat":12.9168499977,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0005",
+    "NAME":"Marenahalli Petrol Bunk",
+    "Ward_No":177,
+    "lon":77.5887163353,
+    "lat":12.9169166678,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0004",
+    "NAME":"Jayanagar 5th BL East",
+    "Ward_No":179,
+    "lon":77.5836329986,
+    "lat":12.9172666679,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0003",
+    "NAME":"Sangam Circle",
+    "Ward_No":179,
+    "lon":77.5772996727,
+    "lat":12.9177333313,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0002",
+    "NAME":"Mini Zoo (KIMS Hospital)",
+    "Ward_No":165,
+    "lon":77.5613163528,
+    "lat":12.9264999981,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst0001",
+    "NAME":"Gowdana Palya",
+    "Ward_No":182,
+    "lon":77.5585330176,
+    "lat":12.9119333315,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000862",
+    "NAME":"Mekhri Circle East",
+    "Ward_No":34,
+    "lon":77.5849108075,
+    "lat":13.0149318786,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000921",
+    "NAME":"Queens Road",
+    "Ward_No":63,
+    "lon":77.599331732,
+    "lat":12.9888366872,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000922",
+    "NAME":"Dickenson Road",
+    "Ward_No":110,
+    "lon":77.611413167,
+    "lat":12.9808133637,
+    "value":0.45
+  },
+  {
+    "Bst_ID":"Blr_Bst000923",
+    "NAME":"Jn Bhaskaran and GC Rd",
+    "Ward_No":90,
+    "lon":77.6200755245,
+    "lat":12.9756576793,
+    "value":0.45
+  }
+]
+    	};
+	</script>
+</html>
