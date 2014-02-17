@@ -89,27 +89,19 @@ def loadBusstopMapJSON():
 def loadBusStop():
     con = lite.connect('bmtc.sqlite')
     cur = con.cursor()
-    cur.execute("select map_link, route_no  FROM routes where map_json_content is null")
+    cur.execute("select map_json_content  FROM routes where map_json_content is not null")
     rows = cur.fetchall()
     cur2 = con.cursor()
     for row in rows:
         try:
-            url = row[0]
-            route_no = row[1]
-            print url
-            html_src = requests.get(url)
-            soup = BeautifulSoup(html_src.content)
-            scripts = soup.findAll("script")
-            our_script = scripts[6]
-            script_text = our_script.text
-            script_text = script_text.replace("jQuery.extend(Drupal.settings, ","")
-            script_text = script_text[:-2]
-            #print script_text
-            data = json.loads(script_text)
-            print data['busstops']
-            document ={"map_json_content": json.dumps(data['busstops']), "route_no":route_no}
-            cur2.execute("update routes set map_json_content=:map_json_content where route_no=:route_no", document)
-            con.commit()
+            map_json_content = row[0]
+            #print map_json_content
+            data = json.loads(map_json_content)
+            for stop in data:   
+                #print stop             
+                document ={"name": stop['busstop'], "lat": stop['latlons'][0], "lng": stop['latlons'][1]}
+                cur2.execute('INSERT INTO busstop (name,lat,lng) VALUES (:name, :lat, :lng)', document)
+                con.commit()
         except:
             pass
     con.close()
