@@ -1,6 +1,7 @@
 
 #!/usr/bin/env python
 import sys
+import sys, traceback
 import sqlite3 as lite
 import requests
 import json
@@ -89,21 +90,35 @@ def loadBusstopMapJSON():
 def loadBusStop():
     con = lite.connect('bmtc.sqlite')
     cur = con.cursor()
-    cur.execute("select map_json_content  FROM routes where map_json_content is not null")
+    cur.execute("select map_json_content, route_no  FROM routes where map_json_content is not null")
     rows = cur.fetchall()
     cur2 = con.cursor()
     for row in rows:
         try:
             map_json_content = row[0]
+            route_no = row[1]
             #print map_json_content
+            order = 0
             data = json.loads(map_json_content)
             for stop in data:   
                 #print stop             
-                document ={"name": stop['busstop'], "lat": stop['latlons'][0], "lng": stop['latlons'][1]}
-                cur2.execute('INSERT INTO busstop (name,lat,lng) VALUES (:name, :lat, :lng)', document)
+                order = order+1
+                print order
+                print route_no
+                #document ={"name": stop['busstop'], "lat": stop['latlons'][0], "lng": stop['latlons'][1]}
+                #cur2.execute('INSERT INTO busstop (name,lat,lng) VALUES (:name, :lat, :lng)', document)
+
+                document_2 ={"busstop": stop['busstop'], "route_no": route_no, "serial": str(order)}
+                cur2.execute('INSERT INTO bus_route (route_no,busstop,serial) VALUES (:route_no, :busstop, :serial)', document_2)
+                print "Done"
                 con.commit()
+
         except:
-            pass
+            print "Exception in user code:"
+            print '-'*60
+            traceback.print_exc(file=sys.stdout)
+            print '-'*60
+
     con.close()
 
 #loadBusstopMapJSON()
