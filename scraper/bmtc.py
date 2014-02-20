@@ -45,16 +45,33 @@ def loadRoutes(start_page_number,final_page_number):
                 origin = i.find("p", { "id" : "origin" })
                 origin_text = (origin.text).replace("Origin :","")
 
-                destination = i.find("p", { "id" : "destination" })
-                destination_text = (destination.text).replace("Destination :","")
+                destination = i.findAll("p", { "id" : "destination" })
+                destination_text = (destination[0].text).replace("Destination :","")
+                destination_time_text = (destination[1].text).replace("Journey Time :","")
+                destination_distance_text = (destination[2].text).replace("Journey Distance :","")
+
 
                 viewbusstop = i.find("p", { "id" : "viewbusstop" })
                 viewbusstop_anchor = viewbusstop.findAll("a")
                 buststop_list = viewbusstop_anchor[0]['href']
                 buststop_map = viewbusstop_anchor[1]['href']
 
-                document = {"route_no":route_text,"origin":origin_text,"destination":destination_text, "map_link":buststop_map, "busstops_link":buststop_list}                
-                cur.execute('INSERT INTO routes (route_no, origin, destination, map_link, busstops_link) VALUES (:route_no, :origin, :destination, :map_link, :busstops_link)', document)
+                #"departure_from_origin", "arrival_at_destination", "departure_from_destination", "arrival_at_origin"
+
+                departure_from_origin = i.find("td", { "id" : "Origin_Start_time"})
+                departure_from_origin_text = departure_from_origin.text
+
+                departure_from_origin_all = i.findAll("td", { "id" : "Departure_Start_time"})
+                arrival_at_destination_text = departure_from_origin_all[0].text
+                departure_from_destination_text = departure_from_origin_all[1].text
+                arrival_at_origin_text = departure_from_origin_all[2].text
+
+
+                document = {"route_no":route_text,"origin":origin_text,"destination":destination_text, "map_link":buststop_map, "busstops_link":buststop_list, "time": destination_time_text, "distance":destination_distance_text, "departure_from_origin":departure_from_origin_text, "arrival_at_destination":arrival_at_destination_text}
+                document["departure_from_destination"] = departure_from_destination_text
+                document["arrival_at_origin"] = arrival_at_origin_text
+
+                cur.execute('INSERT INTO routes (route_no, origin, destination, map_link, busstops_link, time, distance, departure_from_origin, arrival_at_destination, departure_from_destination, arrival_at_origin) VALUES (:route_no, :origin, :destination, :map_link, :busstops_link, :time, :distance, :departure_from_origin, :arrival_at_destination, :departure_from_destination, :arrival_at_origin)', document)
                 print document
                 con.commit()
     con.close()
@@ -121,6 +138,48 @@ def loadBusStop():
 
     con.close()
 
-#loadBusstopMapJSON()
+
+
+def loadTimigs():
+    con = lite.connect('bmtc.sqlite')
+    cur = con.cursor()
+    cur.execute("select route_no, departure_from_origin, arrival_at_destination, departure_from_destination, arrival_at_origin  FROM routes ")
+    rows = cur.fetchall()
+    cur2 = con.cursor()
+    for row in rows:
+        try:
+            route_no = row[0]
+            departure_from_origin = (row[1]).split(",")
+            arrival_at_destination = (row[2]).split(",")
+            departure_from_destination = (row[3]).split(",")
+            arrival_at_origin = (row[4]).split(",")
+
+            for i in xrange(len(departure_from_origin)) :   
+                start = (departure_from_origin[i]).strip()
+                end = (arrival_at_destination[i]).strip()
+                document_2 ={"route_no": route_no, "start": start, "end": end, "up":1}
+                cur2.execute('INSERT INTO timings (route_no , start , end , up) VALUES (:route_no , :start , :end , :up)', document_2)
+                print "up"                
+                con.commit()
+
+            for j in xrange(len(departure_from_destination)) :   
+                start = (departure_from_destination[j]).strip()
+                end = (arrival_at_origin[j]).strip()                
+                document_2 ={"route_no": route_no, "start": start, "end": end, "up":0}
+                cur2.execute('INSERT INTO timings (route_no , start , end , up) VALUES (:route_no , :start , :end , :up)', document_2)
+                print "down"
+                con.commit()
+
+        except:
+            print "Exception in user code:"
+            print '-'*60
+            traceback.print_exc(file=sys.stdout)
+            print '-'*60
+
+    con.close()
+
+
+loadBusstopMapJSON()
 #loadRoutes(start_page_number,final_page_number) 
-loadBusStop()
+#loadBusStop()
+#loadTimigs()
