@@ -1,0 +1,20 @@
+common:
+
+  database: "sqlite:///bmtc_2014.sqlite"
+  prefix: export/
+  format: csv
+
+exports:
+
+  - query: "SELECT * FROM bus_route"
+    filename: "bus_route.csv"
+
+  - query: "SELECT * FROM busstop"
+    filename: "busstop.csv"
+    format: csv
+
+  - query: "SELECT * FROM routes"
+    filename: "routes.csv"
+
+  - query: "SELECT * FROM timings"
+    filename: "timings.csv"
